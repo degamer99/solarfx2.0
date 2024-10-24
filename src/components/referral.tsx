@@ -13,7 +13,7 @@ export default function Referral () {
             </div>
             <div className=" rounded bg-white py-4 px-4 my-6 flex flex-col gap-5">
                 <h2 className="font-bold text-2xl ">Referrals</h2>
-                <p className=" text-sm">Present our project to your friends, family, or any other community and enjoy the financial benefits. You don't even need an active deposit to receive affiliate commission.</p>
+                <p className=" text-sm">Present our project to your friends, family, or any other community and enjoy the financial benefits. You don&apos;t even need an active deposit to receive affiliate commission.</p>
                 <Button size="lg"> Learn More </Button>
             </div>
         </div>

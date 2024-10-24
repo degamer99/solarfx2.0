@@ -119,7 +119,7 @@ export default function Signin() {
 
                     <Button> Sign In </Button>
                     <p className="text-xs text-center" >
-                        Don't have an account? <Link href="/signup" className="font-bold" >
+                        Don&apos;t have an account? <Link href="/signup" className="font-bold" >
                             Sign Up
                         </Link>
                     </p>

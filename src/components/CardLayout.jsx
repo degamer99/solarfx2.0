@@ -1,5 +1,8 @@
 "use client"
 
+import Link from "next/link";
+import { Button } from "./ui/button";
+
 // components/CardLayout.js
 export default function CardLayout() {
     const cardData = [
@@ -78,9 +81,13 @@ export default function CardLayout() {
               </ul>
   
               {/* Button */}
-              <button className="mx-auto px-4 py-2 border-2 border-yellow-600 text-yellow-600 rounded hover:bg-yellow-600 hover:text-white transition duration-300">
+              <Link href="/signin" className="place-self-center">
+              <Button className="mx-auto">
                 {card.button}
-              </button>
+              </Button>
+              </Link>
+              {/* <button className="mx-auto px-4 py-2 border-2 border-yellow-600 text-yellow-600 rounded hover:bg-yellow-600 hover:text-white transition duration-300">
+              </button> */}
             </div>
           ))}
         </div>
