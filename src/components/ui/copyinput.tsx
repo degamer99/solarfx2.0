@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const CopyInput = ({ defaultValue }) => {
+interface CopyInputProps {
+  defaultValue: string; // Define the type for the default value
+}
+
+const CopyInput: React.FC<CopyInputProps> = ({ defaultValue }) => {
   const [inputValue, setInputValue] = useState(defaultValue);
   const [copied, setCopied] = useState(false);
 
@@ -20,7 +24,7 @@ const CopyInput = ({ defaultValue }) => {
         type="text"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
-        className=" w-full border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full border p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         readOnly
       />
 
