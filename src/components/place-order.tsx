@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select"
 
 
-export default function PlaceOrder({ addclassName }) {
+export default function PlaceOrder({ }) {
 
     const leverageOptions = [
         { value: "10", label: "1:10" },
@@ -106,11 +106,7 @@ export default function PlaceOrder({ addclassName }) {
     ];
 
     return (
-        <main
-            className={cn(
-                "", addclassName
-            )}
-        >
+        <main>
             <div className="bg-white rounded-xl py-10 px-8 flex flex-col gap-5">
                 <h2 className="self-start text-xl font-bold m">Assets</h2>
                 <form action="" className="flex flex-col gap-4">
