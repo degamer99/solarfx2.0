@@ -39,12 +39,15 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   icon?: React.ReactNode; // Accept any React node as the icon (e.g., a component)
   labelColor?: string; // Allow custom label color
   iconColor?: string;  // Allow custom icon color
+  divName?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, icon, required, labelColor = "text-blue-600", iconColor = "text-gray-500", ...props }, ref) => {
+  ({ className,divName, type, label, icon, required, labelColor = "text-black", iconColor = "text-gray-500", ...props }, ref) => {
     return (
-      <div className="flex flex-col">
+      <div 
+      className={cn("flex flex-col", divName)}
+      >
         {/* Label */}
         {label && (
           <label className={cn("text-sm font-medium mb-1", labelColor)}>
@@ -55,9 +58,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         {/* Input Container */}
         <div className="border rounded-md flex justify-between items-center">
-          <span className={cn("p-2", iconColor)}>
-            {icon}
-          </span>
+          {icon && (
+            <span className={cn("p-2", iconColor)}>
+              {icon}
+            </span>
+          ) }
           <input
             type={type}
             className={cn(
