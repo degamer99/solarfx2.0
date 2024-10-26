@@ -17,8 +17,6 @@ import Commodities from "../../public/images/commodities.webp";
 
 import FAQSection from "@/components/faq"
 import CardLayout from "@/components/CardLayout"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/ui/index-sidebar"
 import AccountUpgrade from "@/components/account-upgrade"
 import Link from "next/link";
 import Header from "@/components/Header-index";
@@ -187,9 +185,6 @@ const GlobalMarkets = () => {
 
 export default function Index() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      {/* <SidebarTrigger /> */}
       <main className="w-full">
         <Header />
 
@@ -203,6 +198,5 @@ export default function Index() {
 
       </main>
 
-    </SidebarProvider>
   )
 }

@@ -46,17 +46,17 @@ export function AppSidebar() {
   const [isopen, setIsOpen] = useState(true)
   const [issecondOpen, setIssecondOpen] = useState(true)
   const router = useRouter()
-  async function logout (e:any) {
+  async function logout(e: any) {
     try {
 
-      
+
       e.preventDefault();
-      
+
       await signOut(auth).then(() => router.push("/"));
       // Successful logout, you can redirect or perform other actions
 
       console.log("User logged out successfully!");
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Error logging out:", error.message);
     }
   }
@@ -64,61 +64,105 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarMenu className="px-4 py-4 *:py-2">
-        <SidebarMenuSub>
-          <h3>Dashboard</h3>
-        </SidebarMenuSub>
+      <SidebarMenuSub className="*:py-1">
+                <SidebarMenuSubItem>
+                  <SidebarMenuButton>
+                    <Link href="/main/dashboard"> Dashboard</Link>
+                  </SidebarMenuButton>
+                 
+
+                </SidebarMenuSubItem>
+                {/* <SidebarMenuSubItem /> */}
+              </SidebarMenuSub>
         <Collapsible defaultOpen onOpenChange={() => setIsOpen(x => !x)} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
-              <h3 className="flex justify-between"> Fund
-                <ChevronDown
-                  className={`transition-transform duration-300 ease-in-out ${isopen ? '-rotate-90' : 'rotate-0'}`}
-                />
-                {/* { isopen ? <ChevronDown /> : <ChevronRight /> }  */}
-                {/* <ChevronDown  className="-rotate-90 transition-all"/>  */}
-              </h3>
+              <SidebarMenuButton asChild>
+                <h3 className="flex justify-between"> Fund
+                  <ChevronDown
+                    className={`transition-transform duration-300 ease-in-out ${isopen ? '-rotate-90' : 'rotate-0'}`}
+                  />
+                  {/* { isopen ? <ChevronDown /> : <ChevronRight /> }  */}
+                  {/* <ChevronDown  className="-rotate-90 transition-all"/>  */}
+                </h3>
+
+              </SidebarMenuButton>
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarMenuSub className="*:py-1">
-                <Link href="/deposit"> Deposit Funds</Link>
-                <Link href="/withdraw"> Withdraw Funds</Link>
-                <Link href="/fund-logs"> User Fund Logs</Link>
+                <SidebarMenuSubItem>
+                  <SidebarMenuButton>
+                    <Link href="/main/deposit"> Deposit Funds</Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/withdraw"> Withdraw Funds</Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/fund-logs"> User Fund Logs</Link>
+                  </SidebarMenuButton>
+
+                </SidebarMenuSubItem>
                 {/* <SidebarMenuSubItem /> */}
               </SidebarMenuSub>
             </CollapsibleContent>
           </SidebarMenuItem>
-        </Collapsible>
-        <Collapsible defaultOpen onOpenChange={() => setIssecondOpen(x => !x)} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
-              <h3 className="flex justify-between"> Others
-                <ChevronDown
-                  className={`transition-transform duration-300 ease-in-out ${issecondOpen ? '-rotate-90' : 'rotate-0'
-                    }`}
-                />
-              </h3>
+              <SidebarMenuButton asChild>
+                <h3 className="flex justify-between"> Others
+                  <ChevronDown
+                    className={`transition-transform duration-300 ease-in-out ${issecondOpen ? '-rotate-90' : 'rotate-0'
+                      }`}
+                  />
+                </h3>
+              </SidebarMenuButton>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <SidebarMenuSub className="*:py-1 *:flex *:gap-2 *:items-center">
-                <p>
-                  Copy Expert</p>
-                <Link href="/signal"> Purchase Signal</Link>
-                <Link href="/loan">Loan</Link>
+              <SidebarMenuSub className="*:py-1">
+                <SidebarMenuSubItem>
+                  <SidebarMenuButton>
+                    <Link href="/main/copy-expert"> Copy Expert</Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/signal"> Purchase Signal</Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/loan">Loan</Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/view-loans">View Loans</Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/upgrade">Upgrade Account </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/plans">My Plans </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/referral">Referral Program </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/verify">Verify Account </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/profit-history">Profit History </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="" onClick={logout}>Logout</Link>
+                  </SidebarMenuButton>
 
-                <Link href="/view-loans">View Loans</Link>
-                <Link href="/upgrade">Upgrade Account </Link>
-                <Link href="/plans">My Plans </Link>
-                <Link href="/referral">Referral Program </Link>
-                <Link href="/verify">Verify Account </Link>
-                <Link href="/profit-history">Profit History </Link>
-                <Link href="" onClick={logout}>Logout</Link>
+
+                </SidebarMenuSubItem>
                 {/* <SidebarMenuSubItem /> */}
               </SidebarMenuSub>
             </CollapsibleContent>
           </SidebarMenuItem>
         </Collapsible>
+
       </SidebarMenu>
     </Sidebar>
+
+
 
     //   <Sidebar>
     //   <SidebarContent>
