@@ -9,37 +9,14 @@ import { Button } from "@/components/ui/button";
 import { DollarSign } from "lucide-react";
 import { useState } from "react";
 
-export default function Deposit() {
-    const [formData, setFormData] = useState({
-        method: "",
-        amount: "",
-    });
-
-    const handleInputChange = (e: any) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
-    const handleSelectChange = (e: any) => {
-        // console.log(e)
-        const value  = e;
-        setFormData({
-            ...formData,
-            method: value,
-        });
-    };
-    const onSubmit = () => {
-        console.log(formData)
-    }
-
+export default function ProfitHistory() {
+  
     return (
         <div className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
             <Header />
             <Ticker />
-            <h2 className="text-5xl font-bold py-6">Deposit</h2>
-            <div className="bg-white px-4 py-8 flex flex-col gap-4 rounded-md">
+            <h2 className="text-5xl font-bold py-6">Profit History</h2>
+            {/* <div className="bg-white px-4 py-8 flex flex-col gap-4 rounded-md">
                 <h3 className="text-3xl font-bold">Select Payment Method</h3>
                 <Select name="method" onValueChange={handleSelectChange}>
                     <SelectTrigger>
@@ -55,9 +32,9 @@ export default function Deposit() {
                 <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required/>
                 <Button size="lg" className="bg-green-500" onClick={onSubmit}> Continue </Button>
             </div>
-            <br />
+            <br /> */}
             <div className="bg-white rounded-md px-4 p">
-                <h2 className="text-3xl font-bold py-3">Deposit History</h2>
+                <h2 className="text-3xl font-bold py-3">Profit History</h2>
                 <DataTableDemo />
             </div>
         </div>

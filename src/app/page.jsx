@@ -14,12 +14,13 @@ import CandleIcon from "../../public/images/CandleIcon.png";
 import Currency from "../../public/images/currency.webp";
 import Stocks from "../../public/images/stocks.webp";
 import Commodities from "../../public/images/commodities.webp";
-
+import HeroSection from "@/components/HeroSection"
 import FAQSection from "@/components/faq"
 import CardLayout from "@/components/CardLayout"
 import AccountUpgrade from "@/components/account-upgrade"
 import Link from "next/link";
 import Header from "@/components/Header-index";
+import Ticker from "@/components/ui/ticker";
 
 
 const PaymentInfo = [
@@ -56,7 +57,7 @@ const MiniChartSection = () => {
   return (
     <section className=" py-5 " id="chart" style={{
       // use the src property of the image object
-      backgroundImage: `url(${bgChart.src})`,
+      backgroundImage: `url(${bgChart.src}) `,
       // other styles
       backgroundPosition: "center",
       backgroundSize: "cover",
@@ -187,7 +188,8 @@ export default function Index() {
   return (
       <main className="w-full">
         <Header />
-
+        <Ticker />
+        <HeroSection />
         <CardLayout />
         <GlobalMarkets />
 

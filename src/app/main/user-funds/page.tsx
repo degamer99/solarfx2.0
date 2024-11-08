@@ -38,8 +38,8 @@ export default function Deposit() {
         <div className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
             <Header />
             <Ticker />
-            <h2 className="text-5xl font-bold py-6">Deposit</h2>
-            <div className="bg-white px-4 py-8 flex flex-col gap-4 rounded-md">
+            <h2 className="text-5xl font-bold py-6">User Funds Log</h2>
+            {/* <div className="bg-white px-4 py-8 flex flex-col gap-4 rounded-md">
                 <h3 className="text-3xl font-bold">Select Payment Method</h3>
                 <Select name="method" onValueChange={handleSelectChange}>
                     <SelectTrigger>
@@ -54,10 +54,10 @@ export default function Deposit() {
                 </Select>
                 <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required/>
                 <Button size="lg" className="bg-green-500" onClick={onSubmit}> Continue </Button>
-            </div>
+            </div> */}
             <br />
             <div className="bg-white rounded-md px-4 p">
-                <h2 className="text-3xl font-bold py-3">Deposit History</h2>
+                {/* <h2 className="text-3xl font-bold py-3">Deposit History</h2> */}
                 <DataTableDemo />
             </div>
         </div>

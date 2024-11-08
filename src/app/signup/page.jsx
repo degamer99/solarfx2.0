@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Lock, Mail, Megaphone, Phone, User } from "lucide-react"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth, firestore } from "@/components/Firebase";
+import { auth, firestore } from "@/components/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, collection } from "firebase/firestore";
 

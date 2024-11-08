@@ -21,21 +21,21 @@ export default function Dashboard () {
                     {/* <!-- First row with 3 cards --> */}
                     <div className="col-span-1">
                         {/* <!-- Card for Deposits --> */}
-                        <div className="bg-blue-300 p-4 rounded shadow">
+                        <div className="bg-blue-400 p-4 rounded shadow">
                             <h3 className="text-lg font-bold">Deposits</h3>
                             <p>$0.00</p>
                         </div>
                     </div>
                     <div className="col-span-1">
                         {/* <!-- Card for Profit --> */}
-                        <div className="bg-green-300 p-4 rounded shadow">
+                        <div className="bg-green-400 p-4 rounded shadow">
                             <h3 className="text-lg font-bold">Profit</h3>
                             <p>$0.00</p>
                         </div>
                     </div>
                     <div className="col-span-1">
                         {/* <!-- Card for Withdrawals --> */}
-                        <div className="bg-red-300 p-4 rounded shadow">
+                        <div className="bg-red-400 p-4 rounded shadow">
                             <h3 className="text-lg font-bold">Total Withdrawal</h3>
                             <p>$0.00</p>
                         </div>

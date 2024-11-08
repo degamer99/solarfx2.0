@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react"
 import { useState } from "react";
-import { auth } from "@/components/Firebase"
+import { auth } from "@/components/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 

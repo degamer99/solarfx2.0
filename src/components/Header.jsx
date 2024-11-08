@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import SolarLogo from "../../public/images/solarLogo.png";
 import { Button } from "@/components/ui/button";  // Example Shadcn component

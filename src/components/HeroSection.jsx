@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Hero1 from "../../public/images/hero1.png";
 import { useState } from "react";
 import { useRouter } from "next/router";
-
+import Link from "next/link";
+import { Button } from "./ui/button";
 const heroData = [
   {
     headline: "The Safest Place To Trade",
@@ -42,7 +43,6 @@ const HeroSection = () => {
     visible: { opacity: 1, y: 0 },
   };
   const [headData, setHeadData] = useState(0);
-  const router = useRouter();
   return (
     <section
       className="bg-blue-500 text-white h-screen flex flex-col justify-center items-center"
@@ -102,7 +102,10 @@ const HeroSection = () => {
               {data.paragraph}
             </motion.p>
 
-            <motion.button
+            <Link href="/signup">
+            <Button size="lg" className="bg-green-600"> Get Started </Button>
+            </Link>
+            {/* <motion.button
             onClick={() => router.push("/signup")}
               variants={textVariants}
               initial="hidden"
@@ -112,7 +115,7 @@ const HeroSection = () => {
               className="bg-green-500 text-gray-100 py-2 px-4 rounded-md font-semibold hover:bg-green-700 hover:text-white focus:outline-none"
             >
               {data.buttonText}
-            </motion.button>
+            </motion.button> */}
           </motion.div>
         ))}
       </AnimatePresence>

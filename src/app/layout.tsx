@@ -16,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        {/* Tidio script tag */}
+        <script src="//code.tidio.co/kryrf6lki4rnjdqqopvqtinvjdqko7ms.js" async></script>
+        </body>
     </html>
   );
 }

@@ -8,6 +8,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,30 +18,15 @@ import {
 import { CollapsibleContent, Collapsible, CollapsibleTrigger } from "@radix-ui/react-collapsible"
 import { ChevronDown } from "lucide-react"
 import Link from 'next/link'
-import { useState } from "react"
-import { Button } from "./button"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { signOut } from "firebase/auth"
-import { auth } from "@/components/Firebase"
+import { signOut, onAuthStateChanged } from "firebase/auth"
+import { auth } from "@/components/firebase"
+// import SolarLogo from "../public/images/solarLogo.png";
+import SolarLogo from "../../../public/images/solarLogo.png";
+import { Button } from "@/components/ui/button";  // Example Shadcn component
+import Image from 'next/image';  // for your log
 
-// Menu items.
-const sidebarOptions = [
-  {
-    title: "Home",
-  },
-  {
-    title: "Inbox",
-  },
-  {
-    title: "Calendar",
-  },
-  {
-    title: "Search",
-  },
-  {
-    title: "Settings",
-  },
-]
 
 export function AppSidebar() {
   const [isopen, setIsOpen] = useState(true)
@@ -60,20 +46,47 @@ export function AppSidebar() {
       console.error("Error logging out:", error.message);
     }
   }
+  useEffect( () => {
+    if(!router) return;
+    onAuthStateChanged(auth, (user) => {
+      // setUser(user);
+      console.log(user, "this is console.log for user")
+      if (!user) {
+        router.push('/'); // Redirect to index page if not logged in
+      }
+    });
+    console.log("use effect summoned by router")
+  }, [router])
 
   return (
     <Sidebar>
-      <SidebarMenu className="px-4 py-4 *:py-2">
-      <SidebarMenuSub className="*:py-1">
-                <SidebarMenuSubItem>
-                  <SidebarMenuButton>
-                    <Link href="/main/dashboard"> Dashboard</Link>
-                  </SidebarMenuButton>
-                 
+      <SidebarHeader className="px-4 pt-4">
+        <Link href="/">
 
-                </SidebarMenuSubItem>
-                {/* <SidebarMenuSubItem /> */}
-              </SidebarMenuSub>
+          <Image
+            style={{ width: "6rem" }}
+            // className=" scale-50"
+            // style={{ width: "80%" }}
+            src={SolarLogo}
+            alt="My Image"
+            unoptimized
+          // width={40}
+          // height={50}
+          />
+        </Link>
+
+      </SidebarHeader>
+      <SidebarMenu className="px-4 py-4 *:py-2">
+        <SidebarMenuSub className="*:py-1">
+          <SidebarMenuSubItem>
+            <SidebarMenuButton>
+              <Link href="/main/dashboard"> Dashboard</Link>
+            </SidebarMenuButton>
+
+
+          </SidebarMenuSubItem>
+          {/* <SidebarMenuSubItem /> */}
+        </SidebarMenuSub>
         <Collapsible defaultOpen onOpenChange={() => setIsOpen(x => !x)} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -95,10 +108,10 @@ export function AppSidebar() {
                     <Link href="/main/deposit"> Deposit Funds</Link>
                   </SidebarMenuButton>
                   <SidebarMenuButton>
-                    <Link href="/main/withdraw"> Withdraw Funds</Link>
+                    <Link href="/main/withdrawal"> Withdraw Funds</Link>
                   </SidebarMenuButton>
                   <SidebarMenuButton>
-                    <Link href="/main/fund-logs"> User Fund Logs</Link>
+                    <Link href="/main/user-funds"> User Fund Logs</Link>
                   </SidebarMenuButton>
 
                 </SidebarMenuSubItem>
@@ -124,7 +137,7 @@ export function AppSidebar() {
                     <Link href="/main/copy-expert"> Copy Expert</Link>
                   </SidebarMenuButton>
                   <SidebarMenuButton>
-                    <Link href="/main/signal"> Purchase Signal</Link>
+                    <Link href="/main/purchase-signal"> Purchase Signal</Link>
                   </SidebarMenuButton>
                   <SidebarMenuButton>
                     <Link href="/main/loan">Loan</Link>
@@ -133,7 +146,7 @@ export function AppSidebar() {
                     <Link href="/main/view-loans">View Loans</Link>
                   </SidebarMenuButton>
                   <SidebarMenuButton>
-                    <Link href="/main/upgrade">Upgrade Account </Link>
+                    <Link href="/main/upgrade-account">Upgrade Account </Link>
                   </SidebarMenuButton>
                   <SidebarMenuButton>
                     <Link href="/main/plans">My Plans </Link>
@@ -146,6 +159,9 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                   <SidebarMenuButton>
                     <Link href="/main/profit-history">Profit History </Link>
+                  </SidebarMenuButton>
+                  <SidebarMenuButton>
+                    <Link href="/main/support">Support</Link>
                   </SidebarMenuButton>
                   <SidebarMenuButton>
                     <Link href="" onClick={logout}>Logout</Link>
