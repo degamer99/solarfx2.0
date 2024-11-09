@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { firestore } from "./firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import Withdrawal from "@/app/main/withdrawal/page";
 
 type UserData = {
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    deposit: string
     password: string;
     confirmPassword?: string;
     pending?: boolean;
@@ -33,7 +34,9 @@ type UserDataType = {
     // userData: object;
     userData: UserData;
     siteData: siteData;
+    allUserData: object;
     get: (uid: string) => Promise<void>;
+    getAllUserData: () => Promise<void>
     update: (data: UserData) => Promise<void>;
     // update: (data: UserData) => void;
     set: (ref: any, data: UserData) => Promise<void>
@@ -44,6 +47,7 @@ export const useUserData = create<UserDataType>((set) => ({
         firstName: "User",
         lastName: "Name",
         phoneNumber: "",
+        deposit: "",
         password: "",
         pending: false,
         pendingAddress: "",
@@ -60,6 +64,7 @@ export const useUserData = create<UserDataType>((set) => ({
         ethereum: {address: "", url: ""},
         bitcoin: {address: "", url: ""},
     },
+    allUserData: { },
     get: async (uid: string) => {
         // Replace with actual fetch logic if needed
         let fetchedData
@@ -76,6 +81,11 @@ export const useUserData = create<UserDataType>((set) => ({
 
         // const fetchedData = { first: "user", last: "Name" };
         set({ userData: fetchedData });
+    },
+    getAllUserData: async () => {
+        const querySnapshot = await getDocs(collection(firestore, "users"));
+        // set{{ allUserData: {querySnapshot}}};
+        set({ allUserData: {querySnapshot} });
     },
     update: async (data) => {
         set({ userData: data });

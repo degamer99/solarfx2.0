@@ -20,7 +20,7 @@ export default function Dashboard () {
                         {/* <!-- Card for Deposits --> */}
                         <div className="bg-blue-400 p-4 rounded shadow">
                             <h3 className="text-lg font-bold">Deposits</h3>
-                            <p>${userData.tradingAmount}</p>
+                            <p>${userData.deposit}</p>
                         </div>
                     </div>
                     <div className="col-span-1">
