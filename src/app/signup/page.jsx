@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 import { auth, firestore } from "@/components/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, collection } from "firebase/firestore";
+import Image from "next/image";
+import SolarLogo from "../../../public/images/solarLogo.png"
+import { useUserData } from "@/components/store";
 
 
 
@@ -17,8 +20,8 @@ export default function SignUp() {
     const [errorMessage, setErrorMessage] = useState("");
     const [form, setForm] = useState(
         {
-            username: "", email: "", phone: "",
-            password: "", confirm: "", referral: ""
+          firstName: "", lastName: "", email: "", phoneNumber: "",
+            password: "", confirmPassword: "", referral: ""
         }
     )
 
@@ -61,7 +64,9 @@ export default function SignUp() {
     
           // Store extra data in Firestore
           const userRef = doc(firestore, "users", user.uid);
-          await setDoc(userRef, data).then(() => router.push("/main/dashboard"));
+          const set = useUserData.getState().set;
+          await set(userRef, data)
+          .then(() => router.push("/main/dashboard"));
     
           console.log("User signed up:", user);
         } catch (error) {
@@ -101,16 +106,27 @@ export default function SignUp() {
 
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white rounded-xl py-10 px-8 flex flex-col gap-10">
+            <div className="bg-white rounded-xl py-10 px-8 flex flex-col gap-1">
                 <div className="flex flex-col justify-center items-center">
+                <Image
+                style={{ width: "8rem" }}
+                // className=" scale-50"
+                // style={{ width: "80%" }}
+                src={SolarLogo}
+                alt="My Image"
+                unoptimized
+              // width={40}
+                // height={50}
+              />
                     <h2>Create an Account</h2>
                 </div>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <Input onChange={handleInputChange} name="username" type="text" placeholder="Username" icon={<User />} label="Username" required />
+                    <Input onChange={handleInputChange} name="firstName" type="text" placeholder="First Name" icon={<User />} label="First Name" required />
+                    <Input onChange={handleInputChange} name="lastName" type="text" placeholder="last Name" icon={<User />} label="Last Name" required />
                     <Input onChange={handleInputChange} name="email" type="email" placeholder="Email" icon={<Mail />} label="Email" required />
-                    <Input onChange={handleInputChange} name="phone" type="text" placeholder="Enter Phone Number" icon={<Phone />} label="Phone Number" required />
+                    <Input onChange={handleInputChange} name="phoneNumber" type="tel" placeholder="Enter Phone Number" icon={<Phone />} label="Phone Number" required />
                     <Input onChange={handleInputChange} name="password" type="password" placeholder="Password" icon={<Lock />} label="Password" required />
-                    <Input onChange={handleInputChange} name="confirm" type="password" placeholder="Confirm Password" icon={<Lock />} label="Comfirm Password" required />
+                    <Input onChange={handleInputChange} name="confirmPassword" type="password" placeholder="Confirm Password" icon={<Lock />} label="Comfirm Password" required />
                     <Input onChange={handleInputChange} name="referral" type="text" placeholder="Referral Code" icon={<Megaphone />} label="Referral code" />
                     <div className="flex items-center gap-1 my-auto">
                         <input type="checkbox" />
@@ -119,8 +135,7 @@ export default function SignUp() {
                         </label>
 
                     </div>
-                    {<div className="text-black font-bold my-2 ">{errorMessage}</div>}
-
+                    {errorMessage && <div className="text-black font-bold my-2 place-self-start">{errorMessage}</div>}
                     <Button> Create Account </Button>
                     <p className="text-xs text-center" >
                         Already have an account? <Link href="/signin" className="font-bold" >

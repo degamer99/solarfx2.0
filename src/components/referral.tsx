@@ -1,15 +1,17 @@
 "use client"
 
+import { useUserData } from "./store";
 import { Button } from "./ui/button";
 import CopyInput from "./ui/copyinput";
 import { Input } from "./ui/input";
 
 export default function Referral () {
+    const userData = useUserData( state => state.userData)
     return(
         <div>
             <div className=" rounded bg-white py-3 px-4">
                 <h2 className="font-bold text-2xl py-2">Personal Referral Link:</h2>
-                <CopyInput defaultValue="https://www.solarfx.netlify.app/user" />
+                <CopyInput defaultValue={`https://www.solarfx.netlify.app/${userData.firstName}_${userData.lastName}`} />
             </div>
             <div className=" rounded bg-white py-4 px-4 my-6 flex flex-col gap-5">
                 <h2 className="font-bold text-2xl ">Referrals</h2>

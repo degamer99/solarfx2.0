@@ -9,6 +9,9 @@ import { auth, firestore } from "@/components/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
+import Image from "next/image";
+import SolarLogo from "../../../public/images/solarLogo.png"
+import { useUserData } from "@/components/store";
 
 export default function Signin() {
     const router = useRouter()
@@ -35,36 +38,40 @@ export default function Signin() {
                 auth,
                 formData.email,
                 formData.password
-            ).then( async (user) => {
+            )
+            .then( async (user) => {
                 console.log("User signed in", user, user.user.uid);
-                const userRef = doc(firestore, "users", user.user.uid)
-                try {
-                    await getDoc(userRef)
-                    .then((file) => {
-                        let disintergrate = { ...file.data() };
-                        const {
-                          firstName,
-                          lastName,
-                          email,
-                          password,
-                          accountBalance,
-                          accountLevel,
+                // const get = useUserData( (state) => state.get)
+                const get = useUserData.getState().get
+                await get(user.user.uid)
+                // const userRef = doc(firestore, "users", user.user.uid)
+                // try {
+                //     await getDoc(userRef)
+                //     .then((file) => {
+                //         let disintergrate = { ...file.data() };
+                //         const {
+                //           firstName,
+                //           lastName,
+                //           email,
+                //           password,
+                //           accountBalance,
+                //           accountLevel,
                   
-                        } = disintergrate;
-                        console.log("data", file.data())
-                        console.log({
-                          firstName,
-                          lastName,
-                          email,
-                          password,
-                          accountBalance,
-                          accountLevel,
+                //         } = disintergrate;
+                //         console.log("data", file.data())
+                //         console.log({
+                //           firstName,
+                //           lastName,
+                //           email,
+                //           password,
+                //           accountBalance,
+                //           accountLevel,
                   
-                        });
-                      })
-                } catch (error) {
-                    console.error(error)
-                }
+                //         });
+                //       })
+                // } catch (error) {
+                //     console.error(error)
+                // }
 
                 // if (user.user.uid == "fbHlaAd9V5SSp6AamRKW5996tOk1") {
                 //     router.push("/secret");
@@ -163,9 +170,19 @@ export default function Signin() {
     }
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white rounded-xl py-10 px-8 flex flex-col gap-10">
+            <div className="bg-white rounded-xl py-10 px-8 flex flex-col ">
                 <div className="flex flex-col justify-center items-center">
-                    <h2>Login into your account</h2>
+                <Image
+                style={{ width: "8rem" }}
+                // className=" scale-50"
+                // style={{ width: "80%" }}
+                src={SolarLogo}
+                alt="My Image"
+                unoptimized
+              // width={40}
+                // height={50}
+              />
+                    <h2 className="font-bold text-2xl">Login </h2>
                 </div>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <Input name="email" onChange={handleInputChange} type="email" placeholder="Email" icon={<Mail />} label="Email" required />
@@ -183,8 +200,7 @@ export default function Signin() {
                         </Link>
 
                     </div>
-          {<div className="text-black font-bold my-2 ">{errorMessage}</div>}
-
+                    {errorMessage && <div className="text-black font-bold my-2 place-self-center">{errorMessage}</div>}
                     <Button> Sign In </Button>
                     <p className="text-xs text-center" >
                         Don&apos;t have an account? <Link href="/signup" className="font-bold" >
