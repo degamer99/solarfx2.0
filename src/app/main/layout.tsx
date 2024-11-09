@@ -6,7 +6,7 @@ import { AppSidebar } from "@/components/ui/app-sidebar"
 import useAuth from "@/components/authChecker"
 import Ticker from "@/components/ui/ticker";
 import Header from "@/components/Header";
-
+import CopyrightFooter from "@/components/Copyright"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,10 +27,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <SidebarProvider> 
         <AppSidebar />
-        <main className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
+        <main className="min-h-screen bg-gray-100 w-full px-4 py-1 overflow-hidden">
           <Header />
           <Ticker /> 
           {children}  
+          <CopyrightFooter />
         </main>
         
         {/* <useAuth /> */}

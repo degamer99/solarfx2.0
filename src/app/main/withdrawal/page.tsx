@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DollarSign } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Withdrawal() {
     const [formData, setFormData] = useState({
@@ -30,9 +31,6 @@ export default function Withdrawal() {
             method: value,
         });
     };
-    const onSubmit = () => {
-        console.log(formData)
-    }
 
     return (
         <div>
@@ -51,7 +49,9 @@ export default function Withdrawal() {
                     </SelectContent>
                 </Select>
                 <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required/>
-                <Button size="lg" className="bg-green-500" onClick={onSubmit}> Continue </Button>
+                <Link href="/main/payment" >
+                    <Button size="lg" className="bg-green-500" > Continue </Button>
+                </Link>
             </div>
             <br />
             <div className="bg-white rounded-md px-4 p">

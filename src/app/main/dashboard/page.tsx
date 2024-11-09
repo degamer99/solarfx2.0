@@ -7,32 +7,34 @@ import Link from "next/link";
 import Card from "@/components/ui/card"
 import PlaceOrder from "@/components/place-order";
 import Referral from "@/components/referral";
+import { useUserData } from "@/components/store";
 
 export default function Dashboard () {
+    const userData = useUserData( (state) => state.userData)
     return (
         <>
-                <h2 className="font-bold text-xl mt-2">Hello, User</h2>
+                <h2 className="font-bold text-xl mt-2">Hello, {userData.firstName}</h2>
                 <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 py-4">
                     {/* <!-- First row with 3 cards --> */}
                     <div className="col-span-1">
                         {/* <!-- Card for Deposits --> */}
                         <div className="bg-blue-400 p-4 rounded shadow">
                             <h3 className="text-lg font-bold">Deposits</h3>
-                            <p>$0.00</p>
+                            <p>${userData.tradingAmount}</p>
                         </div>
                     </div>
                     <div className="col-span-1">
                         {/* <!-- Card for Profit --> */}
                         <div className="bg-green-400 p-4 rounded shadow">
                             <h3 className="text-lg font-bold">Profit</h3>
-                            <p>$0.00</p>
+                            <p>${userData.totalProfit}</p>
                         </div>
                     </div>
                     <div className="col-span-1">
                         {/* <!-- Card for Withdrawals --> */}
                         <div className="bg-red-400 p-4 rounded shadow">
                             <h3 className="text-lg font-bold">Total Withdrawal</h3>
-                            <p>$0.00</p>
+                            <p>${userData.totalWithdrawal}</p>
                         </div>
                     </div>
 
