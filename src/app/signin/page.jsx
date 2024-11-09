@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link";
 import { Lock, Mail } from "lucide-react"
 import { useState } from "react";
-import { auth } from "@/components/firebase"
+import { auth, firestore } from "@/components/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Signin() {
     const router = useRouter()
@@ -34,14 +35,45 @@ export default function Signin() {
                 auth,
                 formData.email,
                 formData.password
-            ).then((user) => {
+            ).then( async (user) => {
                 console.log("User signed in", user, user.user.uid);
-                if (user.user.uid == "fbHlaAd9V5SSp6AamRKW5996tOk1") {
-                    router.push("/secret");
-                } else {
-                    router.push("/main/dashboard");
+                const userRef = doc(firestore, "users", user.user.uid)
+                try {
+                    await getDoc(userRef)
+                    .then((file) => {
+                        let disintergrate = { ...file.data() };
+                        const {
+                          firstName,
+                          lastName,
+                          email,
+                          password,
+                          accountBalance,
+                          accountLevel,
+                  
+                        } = disintergrate;
+                        console.log("data", file.data())
+                        console.log({
+                          firstName,
+                          lastName,
+                          email,
+                          password,
+                          accountBalance,
+                          accountLevel,
+                  
+                        });
+                      })
+                } catch (error) {
+                    console.error(error)
                 }
-            });
+
+                // if (user.user.uid == "fbHlaAd9V5SSp6AamRKW5996tOk1") {
+                //     router.push("/secret");
+                //     // make this site to be editable
+                // } else {
+                //     router.push("/main/dashboard");
+                // }
+            })
+            .then( () => router.push("/main/dashboard") );
         } catch (error) {
             handleAuthError(error);
 
@@ -93,6 +125,42 @@ export default function Signin() {
         handleSignIn();
     };
 
+    const loginGetData = () => {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              const userRef = doc(firestore, "users", user.uid);
+              try {
+                await getDoc(userRef)
+                  .then((file) => {
+                    let disintergrate = { ...file.data() };
+                    const {
+                      firstName,
+                      lastName,
+                      email,
+                      password,
+                      accountBalance,
+                      accountLevel,
+              
+                    } = disintergrate;
+                    setUserData({
+                      firstName,
+                      lastName,
+                      email,
+                      password,
+                      accountBalance,
+                      accountLevel,
+              
+                    });
+                  })
+                  .then(() => openModal());
+              } catch (error) {
+                console.log(error);
+              }
+            } else {
+              alert("No user logged in");
+            }
+          })
+    }
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white rounded-xl py-10 px-8 flex flex-col gap-10">

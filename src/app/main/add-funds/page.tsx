@@ -24,7 +24,7 @@ export default function Deposit() {
     };
     const handleSelectChange = (e: any) => {
         // console.log(e)
-        const value  = e;
+        const value = e;
         setFormData({
             ...formData,
             method: value,
@@ -35,9 +35,7 @@ export default function Deposit() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
-            <Header />
-            <Ticker />
+        <div>
             <h2 className="text-5xl font-bold py-6">Deposit</h2>
             <div className="bg-white px-4 py-8 flex flex-col gap-4 rounded-md">
                 <h3 className="text-3xl font-bold">Select Payment Method</h3>
@@ -52,7 +50,7 @@ export default function Deposit() {
                         <SelectItem value="Bitcoin">Bitcoin</SelectItem>
                     </SelectContent>
                 </Select>
-                <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required/>
+                <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required />
                 <Button size="lg" className="bg-green-500" onClick={onSubmit}> Continue </Button>
             </div>
             <br />

@@ -35,9 +35,7 @@ export default function Withdrawal() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
-            <Header />
-            <Ticker />
+        <div>
             <h2 className="text-5xl font-bold py-6">Withdraw</h2>
             <div className="bg-white px-4 py-8 flex flex-col gap-4 rounded-md">
                 <h3 className="text-3xl font-bold">Select Payment Method</h3>

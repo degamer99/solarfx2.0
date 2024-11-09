@@ -1,11 +1,8 @@
 import ExpertCard from "@/components/copy-expert-card"
-import Header from "@/components/Header"
-import Ticker from "@/components/ui/ticker"
+
 
 export default function CopyExpert () {
-    return(<div className="w-full"   >
-        <Header />
-        <Ticker />
+    return(<div>
     <div className="grid grid-cols-[repeat(auto-fit,_minmax(320px,1fr))] gap-4 mx-auto place-items-center my-4">
               <ExpertCard 
         name="Stacy R. Hall"

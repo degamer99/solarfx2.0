@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/ui/app-sidebar"
 import useAuth from "@/components/authChecker"
 import Ticker from "@/components/ui/ticker";
+import Header from "@/components/Header";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,10 +27,14 @@ export default function RootLayout({
       <body className={inter.className}>
         <SidebarProvider> 
         <AppSidebar />
+        <main className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
+          <Header />
+          <Ticker /> 
+          {children}  
+        </main>
         
         {/* <useAuth /> */}
         {/* <SidebarTrigger /> */}
-        {children}
         
         </SidebarProvider>
         

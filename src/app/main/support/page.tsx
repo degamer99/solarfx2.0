@@ -6,11 +6,9 @@ import Ticker from '@/components/ui/ticker';
 
 const SupportForm: React.FC = () => {
   return (
-    <div className='w-full'>
-        <Header />
-        <Ticker />
+    <div>
         <div className="max-w-2xl mx-auto p-6 bg-white border rounded-lg shadow-lg text-center">
-        <h1 className="text-3xl font-bold mb-2">Solutionfxtrade Support</h1>
+        <h1 className="text-3xl font-bold mb-2">Solarfx Support</h1>
         <p className="text-lg mb-4">For inquiries, suggestions or complaints. Mail us</p>
         <a href="mailto:support@solutionfxtrade.com" className="text-blue-700 underline mb-6 block">
             support@solutionfxtrade.com

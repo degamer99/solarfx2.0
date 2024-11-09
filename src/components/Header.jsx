@@ -19,6 +19,7 @@ const Header = () => {
   } = useSidebar()
 
   const openSidebar = () => {
+    console.log("openSidebar")
     let newOpen = !open
     setOpen(newOpen)
     setOpenMobile(newOpen)
@@ -26,7 +27,7 @@ const Header = () => {
   return (
     <header className="bg-gray-100 flex items-center py-3 ">
       <div className='flex lg:gap-2 lg:justify-normal items-center  justify-between w-full'>
-        <AlignJustify onClick={openSidebar} color='black' size="2.5rem" />
+        <AlignJustify className='lg:hidden' onClick={openSidebar} color='black' size="2.5rem" />
         <Link href="/">
               <Image
                 style={{ width: "8rem" }}

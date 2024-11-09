@@ -2,10 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
-import Ticker from "@/components/ui/ticker";
 import TradingViewWidget from "@/components/TradingVIew";
 import Link from "next/link";
-import Header from "@/components/Header"
 import Card from "@/components/ui/card"
 import PlaceOrder from "@/components/place-order";
 import Referral from "@/components/referral";
@@ -13,9 +11,6 @@ import Referral from "@/components/referral";
 export default function Dashboard () {
     return (
         <>
-            <main className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
-                <Header />
-                <Ticker />
                 <h2 className="font-bold text-xl mt-2">Hello, User</h2>
                 <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 py-4">
                     {/* <!-- First row with 3 cards --> */}
@@ -66,7 +61,6 @@ export default function Dashboard () {
                 <section>
                     <Referral />
                 </section>
-            </main>
         </>
     );
 

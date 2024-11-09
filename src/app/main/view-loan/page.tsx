@@ -12,10 +12,7 @@ import { useState } from "react";
 export default function viewLoan() {
 
     return (
-        <div className="min-h-screen bg-gray-100 w-full px-4 overflow-hidden">
-            <Header />
-            <Ticker />
-        
+        <div>
             <div className="bg-white rounded-md px-4 p">
                 <h2 className="text-3xl font-bold py-3">Loan History</h2>
                 <DataTableDemo />
