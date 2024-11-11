@@ -50,10 +50,12 @@ export function AppSidebar() {
     if (!router) return;
     onAuthStateChanged(auth, (user) => {
       // setUser(user);
-      console.log(user, "this is console.log for user")
+      console.log(user?.uid, "this is console.log for user")
       if (!user) {
         router.push('/'); // Redirect to index page if not logged in
       }
+      
+      
     });
     console.log("use effect summoned by router")
   }, [router])

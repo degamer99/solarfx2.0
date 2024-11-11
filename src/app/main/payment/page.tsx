@@ -1,17 +1,62 @@
-// components/AddFund.tsx
-import React from 'react';
+// components/Payment.tsx
+"use client";
 
-const AddFund = () => {
+import { useUserData } from '@/components/store';
+import { Button } from '@/components/ui/button';
+import CopyInput from '@/components/ui/copyinput';
+import { useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
+
+const Payment = () => {
+  const [pagePaymentInfo, setPagePaymentInfo] = useState({ name: "null", address: "null" });
+  const searchParams = useSearchParams();
+  const siteData = useUserData(state => state.siteData);
+  const amount = searchParams.get("amount");
+  const method = searchParams.get("method");
+  const { usdt, ethereum, bitcoin } = siteData;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(pagePaymentInfo.address)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
+      })
+      .catch(err => console.error('Failed to copy text: ', err));
+  };
+
+  // Update the state when `method` changes
+  useEffect(() => {
+   
+    switch (method) {
+      case "usdt":
+        setPagePaymentInfo(usdt);
+        break;
+      case "ethereum":
+        setPagePaymentInfo(ethereum);
+        break;
+      case "bitcoin":
+        setPagePaymentInfo(bitcoin);
+        break;
+      default:
+        setPagePaymentInfo({ name: "null", address: "null" });
+        break;
+    }
+  }, [method,usdt, ethereum, bitcoin]); // Dependencies include `method` and site data
+
+  console.log(amount, siteData);
+
   return (
     <div className="p-6 bg-gray-100">
-      <div className="text-xl font-bold mb-4">Add Fund(Bitcoin)</div>
+      <div className="text-xl font-bold mb-4">Add Fund {pagePaymentInfo.name}</div>
       <div className="p-4 bg-white border border-gray-300 rounded-md shadow-md">
         <div className="flex items-center mb-4">
           <div className="flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full">
             <span className="text-xl">$</span>
           </div>
-          <p className="ml-4">Make Payment<span className="font-semibold"></span> to the address below and click &quot; SEND PROOF OF DEPOSIT&quot;</p>
-          {/* <p className="ml-4">Make Payment of <span className="font-semibold">2000$</span> to the address below and click &quot; SEND PROOF OF DEPOSIT&quot;</p> */}
+          <p className="ml-4">
+            Make Payment of ${amount} <span className="font-semibold"></span> to the address below and click &quot; SEND PROOF OF DEPOSIT&quot;
+          </p>
         </div>
 
         <div className="flex flex-col md:flex-row items-center mb-4">
@@ -24,10 +69,12 @@ const AddFund = () => {
             <input
               type="text"
               readOnly
-              value="1GUbDxT8uLSzj5TopnpvVpGqutfBgg1zRf"
+              value={pagePaymentInfo.address}
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none mb-2"
             />
-            <button className="bg-gray-300 text-sm px-4 py-1 rounded-md">Copy</button>
+            <Button onClick={handleCopy}>
+              {copied ? 'Copied!' : 'Copy'}
+            </Button>
           </div>
         </div>
 
@@ -35,7 +82,7 @@ const AddFund = () => {
           <label className="block mb-2 text-gray-600">Upload Proof of Deposit:</label>
           <input type="file" className="block w-full border border-gray-300 rounded-md p-1.5" />
         </div>
-        
+
         <button className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700">
           SEND PROOF OF DEPOSIT
         </button>
@@ -48,4 +95,11 @@ const AddFund = () => {
   );
 };
 
-export default AddFund;
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Payment />
+    </Suspense>
+  );
+}
+

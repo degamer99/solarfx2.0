@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { firestore } from "./firebase";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import Withdrawal from "@/app/main/withdrawal/page";
+import { Payment } from "./ui/dataTable/columns";
+
 
 type UserData = {
     firstName: string;
@@ -22,7 +24,7 @@ type UserData = {
 };
 type paymentOptions = {
     address: string;
-    url: string
+    name: string
 }
 type siteData = {
     usdt: paymentOptions
@@ -34,15 +36,16 @@ type UserDataType = {
     // userData: object;
     userData: UserData;
     siteData: siteData;
-    allUserData: object;
     get: (uid: string) => Promise<void>;
-    getAllUserData: () => Promise<void>
     update: (data: UserData) => Promise<void>;
     // update: (data: UserData) => void;
     set: (ref: any, data: UserData) => Promise<void>
+    editedData: Record<string, Partial<Payment>>;
+  updateEditedData: (id: string, key: keyof Payment, value: string | number) => void;
+  getEditedData: (id: string) => Partial<Payment> | object ;
 };
 
-export const useUserData = create<UserDataType>((set) => ({
+export const useUserData = create<UserDataType>((set, get) => ({
     userData: {
         firstName: "User",
         lastName: "Name",
@@ -60,11 +63,10 @@ export const useUserData = create<UserDataType>((set) => ({
         totalWithdrawal: "0",
     },
     siteData: {
-        usdt: {address: "", url: ""},
-        ethereum: {address: "", url: ""},
-        bitcoin: {address: "", url: ""},
+        usdt: { name: "Usdt (BEP20)", address: "0x52758f99ba0c608d93a4b0c95952c6034b7aa63c" },
+        ethereum: { name: "Ethereum (ERC20)", address: "0x52758f99ba0c608d93a4b0c95952c6034b7aa63c" },
+        bitcoin: { name: "Bitcoin ", address: "1GUbDxT8uLSzj5TopnpvVpGqutfBgg1zRf" },
     },
-    allUserData: { },
     get: async (uid: string) => {
         // Replace with actual fetch logic if needed
         let fetchedData
@@ -82,11 +84,7 @@ export const useUserData = create<UserDataType>((set) => ({
         // const fetchedData = { first: "user", last: "Name" };
         set({ userData: fetchedData });
     },
-    getAllUserData: async () => {
-        const querySnapshot = await getDocs(collection(firestore, "users"));
-        // set{{ allUserData: {querySnapshot}}};
-        set({ allUserData: {querySnapshot} });
-    },
+ 
     update: async (data) => {
         set({ userData: data });
     },
@@ -95,4 +93,17 @@ export const useUserData = create<UserDataType>((set) => ({
         set({ userData: data });
 
     },
+    editedData: {},
+  updateEditedData: (id, key, value) => {
+   const prevData = get().editedData
+
+   set({ editedData : {
+    ...prevData,
+    [id]: {
+        ...prevData[id],
+        [key]: value,
+      },}})
+  },
+  getEditedData: (id) => get().editedData[id],
+
 }));

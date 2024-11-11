@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import ParticlesComponent from "@/components/ui/ParticleBackground"
 const heroData = [
   {
     headline: "The Safest Place To Trade",
@@ -69,6 +70,8 @@ const HeroSection = () => {
             className="text-center"
             exit={{ opacity: 0, y: -20 }}
           >
+      {/* <ParticlesComponent className="[&>canvas]:z-[-5] [&>canvas]:h-full [&>canvas]:w-full"/> */}
+                                                                                                                                                                                                                                                                                    
             <motion.h1
               variants={textVariants}
               initial="hidden"

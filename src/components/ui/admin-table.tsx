@@ -41,44 +41,71 @@ import {
 } from "@/components/ui/table"
 
 const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-]
+    {
+      id: "m5gr84i9",
+      amount: 316,
+      email: "johnbull@gmail.com",
+      name: " John Bull",
+      phoneNumber: "0901234567",
+      accountBalance: 1000,
+      accountLevel: "Beginner",
+      totalProfit: 10000,
+      totalWithdrawal: 5000,
+      pendingStatus: "success",
+      pendingType: "Deposit (Usdt)",
+      pendingAmount: 20,
+      receipt: "i dont have now",
+      dateRegistered: "October First",
+    },
+    {
+      id: "m5gr84i9",
+      amount: 316,
+      email: "johnbull@gmail.com",
+      name: " John Bull",
+      phoneNumber: "0901234567",
+      accountBalance: 1000,
+      accountLevel: "Beginner",
+      totalProfit: 10000,
+      totalWithdrawal: 5000,
+      pendingStatus: "success",
+      pendingType: "Deposit (Usdt)",
+      pendingAmount: 20,
+      receipt: "i dont have now",
+      dateRegistered: "October First",
+    },
+    ]
 
 export type Payment = {
   id: string
   amount: number
-  status: "pending" | "processing" | "success" | "failed"
   email: string
+  name: string;
+  phoneNumber: string;
+  accountBalance: number;
+  accountLevel: string;
+  totalProfit: number;
+  totalWithdrawal: number;
+  pendingStatus: "pending" | "processing" | "success" | "failed";
+  pendingType: string;
+  pendingAmount: number;
+  receipt: string;
+  dateRegistered: string;
 }
+
+// Define your editable cell component
+type EditableCellProps = {
+    value: string | number;
+    onChange: (newValue: string | number) => void;
+  };
+  
+  const EditableCell: React.FC<EditableCellProps> = ({ value, onChange }) => {
+    return (
+      <Input
+        value={value.toString()}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    );
+  };
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -92,7 +119,7 @@ export const columns: ColumnDef<Payment>[] = [
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
-    ),
+    ),  
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -107,7 +134,7 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">{row.getValue("pendingStatus")}</div>
     ),
   },
   {
@@ -200,7 +227,7 @@ export function DataTableDemo() {
   })
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-white">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."

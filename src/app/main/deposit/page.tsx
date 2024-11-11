@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { DollarSign } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Deposit() {
+    const router = useRouter()
     const [formData, setFormData] = useState({
         method: "",
         amount: "",
@@ -32,7 +34,9 @@ export default function Deposit() {
         });
     };
     const onSubmit = () => {
+        const queryString = new URLSearchParams(formData).toString()
         console.log(formData)
+        router.push(`/main/payment?${queryString}`);
     }
 
     return (
@@ -46,15 +50,15 @@ export default function Deposit() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="Credit Card">Credit Card</SelectItem>
-                        <SelectItem value="USDT">USDT</SelectItem>
-                        <SelectItem value="Ethereum">Ethereum</SelectItem>
-                        <SelectItem value="Bitcoin">Bitcoin</SelectItem>
+                        <SelectItem value="usdt">USDT</SelectItem>
+                        <SelectItem value="ethereum">Ethereum</SelectItem>
+                        <SelectItem value="bitcoin">Bitcoin</SelectItem>
                     </SelectContent>
                 </Select>
                 <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required/>
-                <Link href="/main/payment">
+                {/* <Link href="/main/payment"> */}
                     <Button size="lg" className="bg-green-500" onClick={onSubmit}> Continue </Button>
-                </Link>
+                {/* </Link> */}
             </div>
             <br />
             <div className="bg-white rounded-md px-4 p">
