@@ -26,6 +26,7 @@ import { auth } from "@/components/firebase"
 import SolarLogo from "../../../public/images/solarLogo.png";
 import { Button } from "@/components/ui/button";  // Example Shadcn component
 import Image from 'next/image';  // for your log
+import { useUserData } from "../store"
 
 
 export function AppSidebar() {
@@ -48,11 +49,17 @@ export function AppSidebar() {
   }
   useEffect(() => {
     if (!router) return;
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       // setUser(user);
       console.log(user?.uid, "this is console.log for user")
       if (!user) {
         router.push('/'); // Redirect to index page if not logged in
+      }else if ( user && user.uid == "fbHlaAd9V5SSp6AamRKW5996tOk1"){
+        router.push("/main/admin"); //Redirect to admin page if you are the admin
+      }else {
+        console.log("a user")
+        const get = useUserData.getState().get
+        await get(user.uid)
       }
       
       
