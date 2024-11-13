@@ -16,6 +16,7 @@ import { Input } from "../input"
 import { useUserData } from "@/components/store"
 import { doc, updateDoc } from "firebase/firestore"
 import { firestore } from "@/components/firebase"
+import Link from "next/link"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -31,6 +32,7 @@ export type Payment = {
     pendingStatus?: "pending" | "processing" | "success" | "failed";
     pendingType?: string;
     pendingAmount?: number;
+    pendingImage?: string,
     receipt?: string;
     dateRegistered?: string;
 }
@@ -183,6 +185,21 @@ export const columns: ColumnDef<Payment>[] = [
             />
             </div>)
     }},
+    {
+      accessorKey: "pendingImage",
+      header: () => <div className="text-center font-bold text-lg text-black">Pending Image</div>,
+      // header: "Pending Status",
+      cell: ({ row }) => {
+          const pendingImageUrl = row.getValue("pendingImage") as string;
+          return (
+            <div className="text-right font-medium min-w-28">
+              {pendingImageUrl &&
+             <Link href={pendingImageUrl}> <Button className=" font-bold">View Payment Reciept</Button></Link>
+              }
+            </div>
+          );
+        },
+  },
     {
         id: "actions",
         cell: ({ row }) => {

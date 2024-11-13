@@ -40,6 +40,7 @@ export default function Admin() {
             pendingStatus: docData.pendingStatus,
             pendingType: docData.pendingType,
             pendingAmount: docData.pendingAmount,
+            pendingImage: docData.pendingImage,
             receipt: docData.receipt,
             dateRegistered: docData.dateRegistered,
           };
@@ -54,7 +55,7 @@ export default function Admin() {
       }
     };
     getAllUserData()
-  },)
+  },[])
   // const data = getData()
   const data: Payment[] = [
 
@@ -84,17 +85,9 @@ export default function Admin() {
   // }
   return (
     <div>
-      <h2 className="font-bold text-xl mt-2">Hello, User</h2>
+      {/* <h2 className="font-bold text-xl mt-2">Hello, User</h2> */}
       <section className="mb-48">
-        {/* {allUserData.map((value) => {
-                    console.log(value)
-                    return(<div>
-                        <p>{value.name}</p>
-                        <p>{value.email}</p>
-                        <p>{value.accountBalance}</p>
-                    </div>);
-                })} */}
-        {/* <Referral /> */}
+        <h2 className="font-bold text-xl my-4" > Customer Information </h2>
         <DataTable columns={columns} data={allUserData} />
       </section>
 
