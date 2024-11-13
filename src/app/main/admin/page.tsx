@@ -49,10 +49,7 @@ export default function Admin() {
         setAllUserData(userDataArray);
       } catch (error) {
         console.error('Error fetching user data:', error);
-      } finally {
-        console.log(allUserData)
-
-      }
+      } 
     };
     getAllUserData()
   },[])
