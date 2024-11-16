@@ -255,27 +255,34 @@ export const columns: ColumnDef<Payment>[] = [
     id: "actions",
     cell: ({ row }) => {
       const id = row.getValue("id") as string;
-      const name = row.getValue("name") as string; 
+      const name = row.getValue("name") as string;
       const email = row.getValue("email") as string;
+      const userRef = doc(firestore, "users", id)
       const update = async () => {
-        const userRef = doc(firestore, "users", id)
-        await updateDoc(userRef, getEditedData(id));
-        console.log("Edited data for row:", getEditedData(id));
-        alert(`Updated details for ${row.getValue("name")}`)
+        try {
+          await updateDoc(userRef, getEditedData(id)).then(() => {
+            console.log("Send Notification");
+            alert("Notification sent")
+          })
+          
+        } catch (error) {
+         console.log(error) 
+        }
       };
       // const [isDialogOpen, setIsDialogOpen] = useState(false);
 
       // const openDialog = () => setIsDialogOpen(true);
       // const closeDialog = () => setIsDialogOpen(false);
       const [isEmailOpen, setEmailOpen] = useState(false);
-      const [isOtherDialogOpen, setOtherDialogOpen] = useState(false);
+      const [isNotificationOpen, setNotificationOpen] = useState(false);
       const [isSending, setIsSending] = useState(false)
+      const [notificationMessage, setNotificationMessage] = useState(" ")
 
       const openEmailDialog = () => setEmailOpen(true);
       const closeEmailDialog = () => setEmailOpen(false);
 
-      const openOtherDialog = () => setOtherDialogOpen(true);
-      const closeOtherDialog = () => setOtherDialogOpen(false);
+      const openNotification = () => setNotificationOpen(true);
+      const closeNotification = () => setNotificationOpen(false);
 
       const form: RefObject<HTMLFormElement> = useRef(null);
 
@@ -285,13 +292,30 @@ export const columns: ColumnDef<Payment>[] = [
         const formCurrent = form.current || new HTMLFormElement();
 
         emailjs.sendForm('service_kxduvqr', 'template_7tcemc5', formCurrent, '9LjA75Y1B0wz5_FUf')
-        .then((result) => {
-          setIsSending(false)
+          .then((result) => {
+            setIsSending(false)
             console.log(result.text);
-        }, (error) => {
+          }, (error) => {
             console.log(error.text);
-        });
+          });
       };
+      const handleNotificationMessageChange = (e: any) =>{
+        if ( e != null && e.target.value != null){
+          setNotificationMessage(e.target.value)
+        }
+        // console.log("e", e.target.value)
+      }
+      const sendNotification =  async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if(e != null){
+          await updateDoc(userRef, {notificationMessage});
+          console.log("Edited data for row:", getEditedData(id));
+          alert(`Updated details for ${row.getValue("name")}`)
+          // console.log(e, notificationMessage)
+        }
+
+      }
       return (<>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -304,7 +328,7 @@ export const columns: ColumnDef<Payment>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={update}>Publish Changes</DropdownMenuItem>
             <DropdownMenuItem onClick={openEmailDialog}>Send Email</DropdownMenuItem>
-            <DropdownMenuItem onClick={openOtherDialog}>Open Other Dialog</DropdownMenuItem>
+            <DropdownMenuItem onClick={openNotification}>Send Notification</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         {/* Edit Profile Dialog */}
@@ -317,27 +341,20 @@ export const columns: ColumnDef<Payment>[] = [
               <p>Make changes to your profile here. Click save when you're done.</p>
               {/* Add form fields for editing profile */}
               <form ref={form} onSubmit={sendEmail}>
-                {/* <Input name="user_name" type="text" label="Name" required/>
-                <Input name="user_email" type="email" label="Email" required/>
-                <Input name="message" type="text" label="Message" required/>
-                <Button type="submit"> Send </Button> */}
-
-
-
-                <Input name="to_name" type="text" value={name} label="To:" required/>
-                <Input name="to_email" type="email" value={email} label="Email" required/>
-                <Input name="from_name" type="text"  value={"Solarfx"} label="From:" required/>
-                <Input name="message" type="text" label="Message" className="h-32" required/>
+                <Input name="to_name" type="text" value={name} label="To:" required />
+                <Input name="to_email" type="email" value={email} label="Email" required />
+                <Input name="from_name" type="text" value={"Solarfx"} label="From:" required />
+                <Input name="message" type="text" label="Message" className="h-32" required />
                 <br />
                 <div>
                   <Button type="submit"
-                  onClick={() => setIsSending(true)}
-                  > 
-                  { isSending ? "Sending" : "Send"  }
+                    onClick={() => setIsSending(true)}
+                  >
+                    {isSending ? "Sending" : "Send"}
                   </Button>
                   <Button onClick={closeEmailDialog} className="ml-4">
-                  Close
-                </Button>
+                    Close
+                  </Button>
 
                 </div>
                 {/* <label>Name</label>
@@ -348,24 +365,34 @@ export const columns: ColumnDef<Payment>[] = [
                 <textarea name="message" />
                 <input type="submit" value="Send" /> */}
                 <br />
-                
+
               </form>
             </div>
           </DialogContent>
         </Dialog>
 
         {/* Other Dialog */}
-        <Dialog open={isOtherDialogOpen} onOpenChange={setOtherDialogOpen}>
+        <Dialog open={isNotificationOpen} onOpenChange={setNotificationOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Other Dialog</DialogTitle>
+              <DialogTitle>Send Notification to User</DialogTitle>
             </DialogHeader>
+            <form onSubmit={sendNotification}>
+
+            <Input label="Notification Message" type="text" name="notificationMessage" placeholder="Type your notification ..." onChange={handleNotificationMessageChange}required/>
             <div>
-              <p>This is another dialog for different actions.</p>
-            </div>
-            <Button onClick={closeOtherDialog} className="mt-4">
+                  <Button
+                    onClick={() => setIsSending(true)}
+                  >
+                    {isSending ? "Sending Notification" : "Send Notification To Client Dashboard"}
+                  </Button>
+                  <Button onClick={closeNotification} className="ml-4">
               Close
             </Button>
+
+                </div>
+            </form>
+            
           </DialogContent>
         </Dialog>
       </>
