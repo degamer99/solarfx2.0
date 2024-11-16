@@ -13,6 +13,9 @@ export default function Dashboard () {
     const userData = useUserData( (state) => state.userData)
     return (
         <>
+        <div>
+            
+        </div>
                 <h2 className="font-bold text-xl mt-2">Hello, {userData.firstName}</h2>
                 <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6 py-4">
                     {/* <!-- First row with 3 cards --> */}
