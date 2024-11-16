@@ -41,7 +41,7 @@ function DialogDemo() {
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -253,7 +253,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: function Action ({ row }) {
       const id = row.getValue("id") as string;
       const name = row.getValue("name") as string;
       const email = row.getValue("email") as string;
@@ -338,7 +338,7 @@ export const columns: ColumnDef<Payment>[] = [
               <DialogTitle>Send Email to Client</DialogTitle>
             </DialogHeader>
             <div>
-              <p>Make changes to your profile here. Click save when you're done.</p>
+              <p>Make changes to your profile here. Click save when you&apos;re done.</p>
               {/* Add form fields for editing profile */}
               <form ref={form} onSubmit={sendEmail}>
                 <Input name="to_name" type="text" value={name} label="To:" required />
