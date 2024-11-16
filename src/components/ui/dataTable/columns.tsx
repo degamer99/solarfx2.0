@@ -253,7 +253,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     id: "actions",
-    cell: function Action ({ row }) {
+    cell: function Action({ row }) {
       const id = row.getValue("id") as string;
       const name = row.getValue("name") as string;
       const email = row.getValue("email") as string;
@@ -264,9 +264,9 @@ export const columns: ColumnDef<Payment>[] = [
             console.log("Send Notification");
             alert("Notification sent")
           })
-          
+
         } catch (error) {
-         console.log(error) 
+          console.log(error)
         }
       };
       // const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -277,6 +277,7 @@ export const columns: ColumnDef<Payment>[] = [
       const [isNotificationOpen, setNotificationOpen] = useState(false);
       const [isSending, setIsSending] = useState(false)
       const [notificationMessage, setNotificationMessage] = useState(" ")
+      const [isWithdrawOpen, setIsWithdrawOpen] = useState(false)
 
       const openEmailDialog = () => setEmailOpen(true);
       const closeEmailDialog = () => setEmailOpen(false);
@@ -284,7 +285,11 @@ export const columns: ColumnDef<Payment>[] = [
       const openNotification = () => setNotificationOpen(true);
       const closeNotification = () => setNotificationOpen(false);
 
+      const openWithdraw = () => setIsWithdrawOpen(true);
+      const closeWithdraw = () => setIsWithdrawOpen(false);
+
       const form: RefObject<HTMLFormElement> = useRef(null);
+      const withdrawForm: RefObject<HTMLFormElement> = useRef(null);
 
       const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -299,22 +304,47 @@ export const columns: ColumnDef<Payment>[] = [
             console.log(error.text);
           });
       };
-      const handleNotificationMessageChange = (e: any) =>{
-        if ( e != null && e.target.value != null){
+      const handleNotificationMessageChange = (e: any) => {
+        if (e != null && e.target.value != null) {
           setNotificationMessage(e.target.value)
         }
         // console.log("e", e.target.value)
       }
-      const sendNotification =  async (e: React.FormEvent<HTMLFormElement>) => {
+      const sendNotification = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if(e != null){
-          await updateDoc(userRef, {notificationMessage});
+        if (e != null) {
+          await updateDoc(userRef, { notificationMessage });
           console.log("Edited data for row:", getEditedData(id));
           alert(`Updated details for ${row.getValue("name")}`)
           // console.log(e, notificationMessage)
         }
 
+      }
+      const setWithdraw = async (e: React.FormEvent) => {
+        e.preventDefault();
+        // Access form inputs directly using formRef
+        const form = withdrawForm.current;
+        if (!form) {
+          console.log("no form")
+          return
+        }
+        // Create an object from the form data for easy access
+        const formData = new FormData(form);
+        const formValues: { [key: string]: FormDataEntryValue } = {};
+        formData.forEach((value, key) => {
+          formValues[key] = value;
+        });
+
+        console.log('Form Values:', formValues);
+        await updateDoc(userRef, formValues).then(() => {
+          console.log("updated the withdraw settings");
+          alert(`Updated withdraw settings for ${row.getValue("name")}`)
+        })
+
+        // Example: Accessing individual input values
+        // console.log('Name:', formValues['name']);
+        // console.log('Email:', formValues['email']);
       }
       return (<>
         <DropdownMenu>
@@ -329,6 +359,7 @@ export const columns: ColumnDef<Payment>[] = [
             <DropdownMenuItem onClick={update}>Publish Changes</DropdownMenuItem>
             <DropdownMenuItem onClick={openEmailDialog}>Send Email</DropdownMenuItem>
             <DropdownMenuItem onClick={openNotification}>Send Notification</DropdownMenuItem>
+            <DropdownMenuItem onClick={openWithdraw}>set Withdraw Limit</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         {/* Edit Profile Dialog */}
@@ -379,20 +410,50 @@ export const columns: ColumnDef<Payment>[] = [
             </DialogHeader>
             <form onSubmit={sendNotification}>
 
-            <Input label="Notification Message" type="text" name="notificationMessage" placeholder="Type your notification ..." onChange={handleNotificationMessageChange}required/>
-            <div>
-                  <Button
-                    onClick={() => setIsSending(true)}
-                  >
-                    {isSending ? "Sending Notification" : "Send Notification To Client Dashboard"}
-                  </Button>
-                  <Button onClick={closeNotification} className="ml-4">
-              Close
-            </Button>
+              <Input label="Notification Message" type="text" name="notificationMessage" placeholder="Type your notification ..." onChange={handleNotificationMessageChange} required />
+              <br />
+              <div>
+                <Button
+                  onClick={() => setIsSending(true)}
+                >
+                  {isSending ? "Sending Notification" : "Send Notification To Client Dashboard"}
+                </Button>
+                <Button onClick={closeNotification} className="ml-4">
+                  Close
+                </Button>
 
-                </div>
+              </div>
             </form>
-            
+
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Update Client Withdrawal Limit</DialogTitle>
+            </DialogHeader>
+            <form ref={withdrawForm} onSubmit={setWithdraw}>
+
+              <Input label="Set Minimum Withdrawal Amount" type="number" name="minimumWithdrawAmount" placeholder="Type your notification ..." required />
+              <br />
+              <Input label="Minimum Trade for Withdrawall" type="number" name="minimumTrade" placeholder="Type your minimum trade limit ..." required />
+              <br />
+              <Input label="Set number of Client Trade" type="number" name="numberOfTrade" placeholder="Type the number of trades you client has made ..." required />
+              <br />
+              <div>
+                <Button
+                  onClick={() => setIsSending(true)}
+                >
+                  {isSending ? "Sending Notification" : "Send Notification To Client Dashboard"}
+                </Button>
+                <Button onClick={closeWithdraw} className="ml-4">
+                  Close
+                </Button>
+
+              </div>
+            </form>
+
           </DialogContent>
         </Dialog>
       </>

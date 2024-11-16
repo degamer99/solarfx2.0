@@ -6,31 +6,42 @@ import Ticker from "@/components/ui/ticker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DollarSign } from "lucide-react";
-import { useState } from "react";
+import { AlertCircle, DollarSign } from "lucide-react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useUserData } from "@/components/store";
 
-export default function Withdrawal() {
+export default function Withdraw() {
+    const router = useRouter()
+    const userData = useUserData((state) => state.userData)
     const [formData, setFormData] = useState({
         method: "",
         amount: "",
     });
 
-    const handleInputChange = (e: any) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value,
         });
     };
-    const handleSelectChange = (e: any) => {
-        // console.log(e)
-        const value  = e;
+
+    const handleSelectChange = (value: string) => {
         setFormData({
             ...formData,
             method: value,
         });
     };
+
+    const onSubmit = () => {
+        const queryString = new URLSearchParams(formData).toString();
+        console.log(formData);
+        router.push(`/main/payment?${queryString}`);
+    };
+    console.log("numberOfTrade", userData.numberOfTrade )
+    console.log("minimumTrade", userData.minimumTrade )
 
     return (
         <div>
@@ -43,15 +54,26 @@ export default function Withdrawal() {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="Credit Card">Credit Card</SelectItem>
-                        <SelectItem value="USDT">USDT</SelectItem>
-                        <SelectItem value="Ethereum">Ethereum</SelectItem>
-                        <SelectItem value="Bitcoin">Bitcoin</SelectItem>
+                        <SelectItem value="usdt">USDT</SelectItem>
+                        <SelectItem value="ethereum">Ethereum</SelectItem>
+                        <SelectItem value="bitcoin">Bitcoin</SelectItem>
                     </SelectContent>
                 </Select>
-                <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required/>
-                <Link href="/main/payment" >
-                    <Button size="lg" className="bg-green-500" > Continue </Button>
-                </Link>
+                <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required />
+                
+                {/* Safely check if userData values are defined */}
+                { (userData.numberOfTrade ?? 0) >= (userData.minimumTrade ?? 2)  ? (
+                    <Button size="lg" className="bg-green-500" onClick={onSubmit}>Continue</Button>
+                )
+                 :
+                 (
+                    <div className="my-2 flex items-center border border-gray-300 rounded-lg p-4 shadow-lg bg-gray-100 space-x-3">
+                        <AlertCircle className="text-red-500 w-5 h-5" />
+                        <p className="text-gray-800 font-medium ml-2">
+                            You need to perform a minimum of <span className="font-bold text-lg">{(userData.minimumTrade ?? 2)} </span>trade to withdraw
+                        </p>
+                    </div>
+                )}
             </div>
             <br />
             <div className="bg-white rounded-md px-4 p">

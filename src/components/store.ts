@@ -22,6 +22,9 @@ type UserData = {
     WithdrawalLimit?: string;
     totalWithdrawal?: string;
     notificationMessage?: string
+    minimumWithdrawAmount?: number
+    minimumTrade?: number
+    numberOfTrade?: number
 };
 type paymentOptions = {
     address: string;
