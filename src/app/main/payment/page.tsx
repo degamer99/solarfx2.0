@@ -5,25 +5,37 @@ import { auth, firestore, storage } from '@/components/firebase';
 import { useUserData } from '@/components/store';
 import { Button } from '@/components/ui/button';
 import CopyInput from '@/components/ui/copyinput';
+import { PaymentInfo } from '@/components/ui/dataTable/columns';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import React, { useState, useEffect, Suspense } from 'react';
 
 const Payment = () => {
-  const [pagePaymentInfo, setPagePaymentInfo] = useState({ name: "null", address: "null" });
+  const [pagePaymentInfo, setPagePaymentInfo] = useState<PaymentInfo | null>(null); // Allow null initially
   const searchParams = useSearchParams();
-  const siteData = useUserData(state => state.siteData);
+  const paymentData = useUserData(state => state.paymentData);
   const amount = searchParams.get("amount");
   const method = searchParams.get("method");
-  const { usdt, ethereum, bitcoin } = siteData;
+  // const { usdt, ethereum, bitcoin } = siteData;
   const [copied, setCopied] = useState(false);
   const [file, setFile] = useState<any>()
   const [sending, setSending] = useState(false)
 
+  const getPaymentData = (paymentData: PaymentInfo[], method: string | null): PaymentInfo | null => {
+    if (!method) return null; // Handle case where method is null
+    return paymentData.find((item) => item.paymentName === method) || null;
+  };
+  useEffect(() => {
+    const relevantPaymentInfo = getPaymentData(paymentData, method);
+    setPagePaymentInfo(relevantPaymentInfo);
+  }, [paymentData, method]);
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(pagePaymentInfo.address)
+    if (!pagePaymentInfo) return
+    navigator.clipboard.writeText(pagePaymentInfo.paymentAddress)
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
@@ -56,14 +68,14 @@ const Payment = () => {
       const confirmRef = ref(storage, "confirm/" + user.uid);
       uploadBytes(confirmRef, file).then(async (snapshot) => {
         console.log("snapshot", snapshot);
-        let link = await getDownloadURL(confirmRef);
+        let link = await getDownloadURL(confirmRef); ""
         console.log(link);
         await setDoc(userRef, {
           pendingImage: link,
           pending: true,
           pendingType: "Deposit",
           pendingAmount: amount,
-          pendingAddress: pagePaymentInfo.address,
+          pendingAddress: pagePaymentInfo?.paymentAddress,
         }, { merge: true }).then(() => {
           setSending(false)
           console.log("File stuff has been done")
@@ -79,30 +91,30 @@ const Payment = () => {
 
   }
 
-  // Update the state when `method` changes
-  useEffect(() => {
+  // // Update the state when `method` changes
+  // useEffect(() => {
 
-    switch (method) {
-      case "usdt":
-        setPagePaymentInfo(usdt);
-        break;
-      case "ethereum":
-        setPagePaymentInfo(ethereum);
-        break;
-      case "bitcoin":
-        setPagePaymentInfo(bitcoin);
-        break;
-      default:
-        setPagePaymentInfo({ name: "null", address: "null" });
-        break;
-    }
-  }, [method, usdt, ethereum, bitcoin]); // Dependencies include `method` and site data
+  //   switch (method) {
+  //     case "usdt":
+  //       setPagePaymentInfo(usdt);
+  //       break;
+  //     case "ethereum":
+  //       setPagePaymentInfo(ethereum);
+  //       break;
+  //     case "bitcoin":
+  //       setPagePaymentInfo(bitcoin);
+  //       break;
+  //     default:
+  //       setPagePaymentInfo({ name: "null", address: "null" });
+  //       break;
+  //   }
+  // }, [method, usdt, ethereum, bitcoin]); // Dependencies include `method` and site data
 
-  console.log(amount, siteData);
+  // console.log(amount, siteData);
 
   return (
     <div className="p-6 bg-gray-100">
-      <div className="text-xl font-bold mb-4">Add Fund {pagePaymentInfo.name}</div>
+      <div className="text-xl font-bold mb-4">Add Fund {pagePaymentInfo?.paymentName}</div>
       <form onSubmit={onSubmit}>
         <div className="p-4 bg-white border border-gray-300 rounded-md shadow-md">
           <div className="flex items-center mb-4">
@@ -115,8 +127,18 @@ const Payment = () => {
           </div>
 
           <div className="flex flex-col md:flex-row items-center mb-4">
-            <div className="w-40 h-40 mb-4 md:mb-0 md:mr-4 bg-gray-200 rounded-md flex items-center justify-center">
+            <div className="w-24 h-24 mb-4 md:mb-0 md:mr-4 bg-gray-200 rounded-md flex items-center justify-center">
               {/* Placeholder for the QR code */}
+              { pagePaymentInfo && (
+                <Image
+                  src={pagePaymentInfo?.paymentQrcode}
+                  alt='Qr Code'
+                  width={80}
+                  height={80}
+                  className='w-full h-full'
+                />
+
+              )}
               {/* <img src="/path/to/qr-code.png" alt="QR Code" className="h-full w-full object-contain" /> */}
             </div>
 
@@ -124,7 +146,7 @@ const Payment = () => {
               <input
                 type="text"
                 readOnly
-                value={pagePaymentInfo.address}
+                value={pagePaymentInfo?.paymentAddress}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none mb-2"
               />
               <Button onClick={handleCopy}>
@@ -139,7 +161,7 @@ const Payment = () => {
           </div>
 
           <button className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700">
-           {sending ? "Sending" : "Send"}
+            {sending ? "Sending" : "Send"}
           </button>
         </div>
       </form>

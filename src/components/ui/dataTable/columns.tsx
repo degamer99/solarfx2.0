@@ -1,6 +1,5 @@
 "use client"
 
-import CustomDialog from "@/components/ui/customDialog";
 import emailjs from '@emailjs/browser';
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
@@ -26,45 +25,363 @@ import {
 import { Label } from "@/components/ui/label"
 import { Input } from "../input"
 import { useUserData } from "@/components/store"
-import { doc, updateDoc } from "firebase/firestore"
-import { firestore } from "@/components/firebase"
+import { deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"
+import { firestore, storage } from "@/components/firebase"
 import Link from "next/link"
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import Image from 'next/image';
 
-function DialogDemo() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <p>Edit Profile</p>
-        {/* <Button variant="outline">Edit Profile</Button> */}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input id="name" value="Pedro Duarte" className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Username
-            </Label>
-            <Input id="username" value="@peduarte" className="col-span-3" />
-          </div>
-        </div>
-        <DialogFooter>
-          {/* <Button type="submit">Save changes</Button> */}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+export type expertData = {
+  name: string
+  followers: number
+  capital: number
+  profitPercentage: number
+  totalProfit: number
+  rating: number
+  image: string
 }
+
+export const expertColumns: ColumnDef<expertData>[] = [
+  {
+    accessorKey: "name",
+    header: "Expert Name",
+  },
+  {
+    accessorKey: "followers",
+    header: "Number of Followers",
+  },
+  {
+    accessorKey: "capital",
+    header: "Capital",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("capital"))
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amount)
+      const id = row.getValue("id") as string;
+
+      return <p>{formatted}</p>
+    }
+  },
+  {
+    accessorKey: "profitPercentage",
+    header: "Percentage Profit",
+    cell: ({ row }) => {
+      const percent = parseFloat(row.getValue("profitPercentage"))
+      return <p>{percent}%</p>
+    }
+  },
+  {
+    accessorKey: "totalProfit",
+    header: "Total Profit",
+    cell: ({ row }) => {
+      const profit = parseFloat(row.getValue("totalProfit"))
+      return <p>{profit}%</p>
+    }
+  },
+  {
+    accessorKey: "rating",
+    header: "Rating",
+  },
+  {
+    accessorKey: "image",
+    header: "Expert Image",
+    cell: ({row}) => {
+      const imageUrl = row.original.image
+      const name = row.original.name
+
+      return <Image 
+      src={imageUrl}
+      alt={name + "image"}
+      width={50}
+      height={50}
+      />
+    }
+  },
+  {
+    id: "actions",
+    header: "Edit",
+    cell: function Edit({ row }) {
+      // const expertInfo = row.original
+      const {name,followers, capital, profitPercentage, totalProfit, rating } = row.original
+      const [isSending, setIsSending] = useState(false)
+      const [isChangesOpen, setChangesOpen] = useState(false)
+      const [file, setFile] = useState<any>()
+      const [formData, setFormData] = useState({
+        name: "john"
+      });
+
+      const expertRef = doc(firestore, "expert", formData.name);
+      const handleInputChange = (e: any) => {
+        const { name, value } = e.target;
+        if (!value) return
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      };
+      const handleImageChange = (e: any) => {
+        const file = e.target.files[0];
+        // Check if a file is selected and it is an image
+        if (file && file.type.startsWith('image/')) {
+          // Do something with the selected image file
+          console.log(file)
+          setFile(file)
+          // onFileChange(file);
+        } else {
+          // Handle non-image file selection (you can show an error message or perform other actions)
+          console.error('Please select a valid image file.');
+          alert('Please select a valid image file.');
+        }
+
+      }
+      const editChanges = async (e: any) => {
+        e.preventDefault()
+        setIsSending(true)
+      const imageRef = ref(storage, "expert/" + formData.name);
+        console.log("hello", formData)
+        try {
+          uploadBytes(imageRef, file).then(async () => {
+           await getDownloadURL(imageRef).then( async (link) => {
+             console.log(link)
+                // Directly include `link` in the data passed to Firestore
+      const updatedData = { ...formData, image: link };
+            //  setFormData((prevState) => ({
+            //   ...prevState,
+            //   paymentQrcode: link, // Replace "newValue" with the actual value you want to set
+            // }));
+            console.log(updatedData)
+            await setDoc(expertRef, updatedData, { merge: true }).then(() => {
+              setIsSending(false)
+            });
+
+           });
+          
+          })
+
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      const deleteData = async () => {
+        try {
+          await deleteDoc(expertRef).then(() => alert("Expert has been Deleted"))
+        } catch (error) {
+          console.error(error)          
+        }
+      }
+
+      return (<>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            {/* <DropdownMenuSeparator /> */}
+            <DropdownMenuItem onClick={() => setChangesOpen(true)}>Edit Copy Expert</DropdownMenuItem>
+            <DropdownMenuItem onClick={deleteData} className='bg-red-600 text-gray-400 font-bold'>Delete Copy Expert</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Dialog open={isChangesOpen} onOpenChange={setChangesOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Send Notification to User</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={editChanges}>
+              <Input label='Expert Name' name='name' defaultValue={name} placeholder='John' type="text" onChange={handleInputChange} required />
+              
+              <Input label='Number of Followers' name='followers' defaultValue={followers}  type="number" onChange={handleInputChange} required />
+              
+              <Input label='Capital' name='capital' defaultValue={capital} placeholder='' type="text" onChange={handleInputChange} required />
+              
+              <Input label='Percentage Profit' name='profitPercentage' defaultValue={profitPercentage} type="number" onChange={handleInputChange} required />
+              
+              <Input label='Total Profit' name='totalProfit' defaultValue={totalProfit} type="text" onChange={handleInputChange} required />
+              
+              <Input label='Rating (Number of Star)' name='rating' defaultValue={rating} type="text" onChange={handleInputChange} required />
+              
+              <Input label='Expert Image' name='image'  type="file" onChange={handleImageChange} required />
+              
+              <div>
+                <Button
+                  onClick={() => setIsSending(true)}
+                >
+                  {isSending ? "Uploading" : "Upload Data to Site Database"}
+                </Button>
+                <Button type='button' onClick={() => setChangesOpen(false)} className="ml-4">
+                  Close
+                </Button>
+
+              </div>
+            </form>
+
+          </DialogContent>
+        </Dialog>
+      </>
+      )
+    },
+  },
+]
+
+
+export type PaymentInfo = {
+  id: string
+  paymentName: string
+  paymentAddress: string
+  paymentQrcode: string | " "
+}
+
+export const paymentColumns: ColumnDef<PaymentInfo>[] = [
+  {
+    accessorKey: "paymentName",
+    header: "Payment Name",
+  },
+  {
+    accessorKey: "paymentAddress",
+    header: "Payment Address",
+  },
+  {
+    accessorKey: "paymentQrcode",
+    header: "Payment Qrcode",
+    cell: ({row}) => {
+      const qrUrl = row.original.paymentQrcode
+      return <Image 
+      src={qrUrl}
+      alt='Qr Code'
+      width={50}
+      height={50}
+      />
+    }
+  },
+  {
+    id: "actions",
+    header: "Edit",
+    cell: function Edit({ row }) {
+      const paymentInfo = row.original
+      const [isSending, setIsSending] = useState(false)
+      const [isChangesOpen, setChangesOpen] = useState(false)
+      const [file, setFile] = useState<any>()
+      const [formData, setFormData] = useState({
+        paymentName: "btc",
+        paymentQrcode: ""
+      });
+      const handleInputChange = (e: any) => {
+        const { name, value } = e.target;
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      };
+      const handleImageChange = (e: any) => {
+        const file = e.target.files[0];
+        // Check if a file is selected and it is an image
+        if (file && file.type.startsWith('image/')) {
+          // Do something with the selected image file
+          console.log(file)
+          setFile(file)
+          // onFileChange(file);
+        } else {
+          // Handle non-image file selection (you can show an error message or perform other actions)
+          console.error('Please select a valid image file.');
+          alert('Please select a valid image file.');
+        }
+
+      }
+      const editChanges = async (e: any) => {
+        e.preventDefault()
+        setIsSending(true)
+        const paymentRef = doc(firestore, "paymentInfo", formData.paymentName);
+      const qrRef = ref(storage, "qr/" + formData.paymentName);
+        console.log("hello", formData)
+        try {
+          uploadBytes(qrRef, file).then(async () => {
+           await getDownloadURL(qrRef).then( async (link) => {
+             console.log(link)
+                // Directly include `link` in the data passed to Firestore
+      const updatedData = { ...formData, paymentQrcode: link };
+            //  setFormData((prevState) => ({
+            //   ...prevState,
+            //   paymentQrcode: link, // Replace "newValue" with the actual value you want to set
+            // }));
+            console.log(updatedData)
+            await setDoc(paymentRef, updatedData, { merge: true }).then(() => {
+              setIsSending(false)
+            });
+
+           });
+          
+          })
+
+        } catch (error) {
+          console.error(error)
+        }
+      }
+      const deleteData = async () => {
+        const paymentRef = doc(firestore, "paymentInfo", formData.paymentName);
+        try {
+          await deleteDoc(paymentRef).then(() => alert("Payment Method has been Deleted"))
+        } catch (error) {
+          console.error(error)          
+        }
+      }
+
+      return (<>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(paymentInfo.paymentAddress)}
+            >
+              Copy payment Address
+            </DropdownMenuItem>
+            {/* <DropdownMenuSeparator /> */}
+            <DropdownMenuItem onClick={() => setChangesOpen(true)}>Edit Payment Information</DropdownMenuItem>
+            <DropdownMenuItem onClick={deleteData} className='bg-red-600 text-gray-400 font-bold'>Delete payment Method</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Dialog open={isChangesOpen} onOpenChange={setChangesOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Send Notification to User</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={editChanges}>
+              <Input label='Payment Name' name='paymentName' defaultValue={paymentInfo.paymentName} placeholder='Btc ...' type="text" onChange={handleInputChange} required />
+              <br />
+              <Input label='Payment Address' name='paymentAddress' defaultValue={paymentInfo.paymentAddress} placeholder='adfkluajijadshkujaf....' type="text" onChange={handleInputChange} required />
+              <br />
+              <Input label='Payment Qrcode' name='paymentQrcode'  type="file" onChange={handleImageChange} required />
+              <br />
+              <div>
+                <Button
+                  onClick={() => setIsSending(true)}
+                >
+                  {isSending ? "Uploading" : "Upload Data to Site Database"}
+                </Button>
+                <Button type='button' onClick={() => setChangesOpen(false)} className="ml-4">
+                  Close
+                </Button>
+
+              </div>
+            </form>
+
+          </DialogContent>
+        </Dialog>
+      </>
+      )
+    },
+  },
+]
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -388,13 +705,7 @@ export const columns: ColumnDef<Payment>[] = [
                   </Button>
 
                 </div>
-                {/* <label>Name</label>
-                <input type="text" name="user_name" /> */}
-                {/* <label>Email</label>
-                <input type="email" name="user_email" />
-                <label>Message</label>
-                <textarea name="message" />
-                <input type="submit" value="Send" /> */}
+
                 <br />
 
               </form>

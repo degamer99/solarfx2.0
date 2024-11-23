@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
+import { Roboto, Merriweather, Inter } from '@next/font/google';
+
+const roboto = Roboto({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-roboto' });
+const merriweather = Merriweather({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-merriweather' });
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${roboto.variable} ${merriweather.variable}`}>
       <body className={inter.className}>
         {children}
         {/* Tidio script tag */}

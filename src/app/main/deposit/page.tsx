@@ -7,11 +7,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DollarSign } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useUserData } from "@/components/store";
 
 export default function Deposit() {
+    const getPaymentData = useUserData( state => state.getPaymentData)
+    const paymentData = useUserData( state => state.paymentData)
+    useEffect(() => {
+        getPaymentData()
+    }, [])
     const router = useRouter()
     const [formData, setFormData] = useState({
         method: "",
@@ -49,10 +55,13 @@ export default function Deposit() {
                         <SelectValue placeholder="Select Payment Method" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="Credit Card">Credit Card</SelectItem>
-                        <SelectItem value="usdt">USDT</SelectItem>
+                        <SelectItem value="Credit Card" disabled>Credit Card</SelectItem>
+                    {paymentData.map((value) => {
+                         return <SelectItem value={value.paymentName} key={value.paymentName}>{value.paymentName}</SelectItem>
+                    }) }
+                        {/* <SelectItem value="usdt">USDT</SelectItem>
                         <SelectItem value="ethereum">Ethereum</SelectItem>
-                        <SelectItem value="bitcoin">Bitcoin</SelectItem>
+                        <SelectItem value="bitcoin">Bitcoin</SelectItem> */}
                     </SelectContent>
                 </Select>
                 <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required/>

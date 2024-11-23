@@ -13,6 +13,11 @@ import { useRouter } from "next/navigation";
 import { useUserData } from "@/components/store";
 
 export default function Withdraw() {
+    const getPaymentData = useUserData( state => state.getPaymentData)
+    const paymentData = useUserData( state => state.paymentData)
+    useEffect(() => {
+        getPaymentData()
+    }, [])
     const router = useRouter()
     const userData = useUserData((state) => state.userData)
     const [formData, setFormData] = useState({
@@ -53,10 +58,10 @@ export default function Withdraw() {
                         <SelectValue placeholder="Select Payment Method" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="Credit Card">Credit Card</SelectItem>
-                        <SelectItem value="usdt">USDT</SelectItem>
-                        <SelectItem value="ethereum">Ethereum</SelectItem>
-                        <SelectItem value="bitcoin">Bitcoin</SelectItem>
+                    <SelectItem value="Credit Card" disabled>Credit Card</SelectItem>
+                    {paymentData.map((value) => {
+                         return <SelectItem key={value.paymentName} value={value.paymentName}>{value.paymentName}</SelectItem>
+                    }) }
                     </SelectContent>
                 </Select>
                 <Input name="amount" type="number" placeholder="Amount" icon={<DollarSign />} onChange={handleInputChange} required />

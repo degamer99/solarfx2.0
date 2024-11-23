@@ -13,12 +13,13 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { firestore } from "@/components/firebase";
 import { DataTable } from "@/components/ui/dataTable/page";
-import { Payment, columns } from "@/components/ui/dataTable/columns";
+import { Payment, PaymentInfo, columns, expertColumns, expertData, paymentColumns } from "@/components/ui/dataTable/columns";
 
 
 export default function Admin() {
   const [allUserData, setAllUserData] = useState<Payment[]>([]);
-  // const [allUserData, setAllUserData] = useState([])
+  const [paymentData, setPaymentData] = useState<PaymentInfo[]>([]);
+  const [expertData, setExpertData] = useState<expertData[]>([]);
   useEffect(() => {
     const getAllUserData = async () => {
       try {
@@ -49,10 +50,57 @@ export default function Admin() {
         setAllUserData(userDataArray);
       } catch (error) {
         console.error('Error fetching user data:', error);
-      } 
+      }
+    };
+    const getPaymentData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(firestore, 'paymentInfo'));
+        const paymentDataArray: PaymentInfo[] = [];
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data();
+
+          // Ensure all required fields are present, or provide default values
+          const paymentData: PaymentInfo = {
+            id: doc.id,
+            paymentName: docData.paymentName,
+            paymentAddress: docData.paymentAddress,
+            paymentQrcode: docData.paymentQrcode,
+          };
+          paymentDataArray.push(paymentData);
+        });
+        setPaymentData(paymentDataArray);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    const getExpertData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(firestore, 'expert'));
+        const expertDataArray: expertData[] = [];
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data();
+
+          // Ensure all required fields are present, or provide default values
+          const expertData: expertData = {
+           name: docData.name,
+           followers: docData.followers,
+           capital: docData.capital,
+           profitPercentage: docData.profitPercentage,
+           totalProfit: docData.totalProfit,
+           rating: docData.rating,
+           image: docData.image,
+          };
+          expertDataArray.push(expertData);
+        });
+        setExpertData(expertDataArray);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     };
     getAllUserData()
-  },[])
+    getPaymentData()
+    getExpertData()
+  }, [])
   // const data = getData()
   const data: Payment[] = [
 
@@ -74,18 +122,24 @@ export default function Admin() {
 
     // ...
   ]
-  // const data = {
-  //     id: "12345",
-  //     amount: 100,
-  //     status: "pending",
-  //     email: "olayinkabello962@gmail.com",
-  // }
+  // const expertData: expertData[] = [
+  //   {
+  //     name: "Stacy R. Hall",
+  //     followers: 30000,
+  //     capital: 6500,
+  //     profitPercentage: 70,
+  //     totalProfit: 450000,
+  //     rating: 3,
+  //   },
+  // ]
   return (
     <div>
       {/* <h2 className="font-bold text-xl mt-2">Hello, User</h2> */}
       <section className="mb-48">
         <h2 className="font-bold text-xl my-4" > Customer Information </h2>
         <DataTable columns={columns} data={allUserData} />
+        <DataTable columns={paymentColumns} data={paymentData} />
+        <DataTable columns={expertColumns} data={expertData} />
       </section>
 
     </div>
