@@ -1,14 +1,13 @@
 <!-- This is the section for your card's back side -->
 <main class="back">
     <div id="word-pairs-container"></div> <!-- Container where words and translations will be inserted -->
-    <p class="full-translation">
-      In the name of Allāh,[1] the Entirely Merciful, the Especially Merciful.[2]
-    </p>
+    <p id="full-translation"></p> <!-- Full translation below -->
 </main>
-  
-  <!-- Add the script for dynamic word pairing -->
-  <script>
+
+<!-- Add the script for dynamic word pairing -->
+<script>
     // The Arabic words and their translations
+    // const wordTranslationPair = {{ArabicObject}};
     const wordTranslationPair = [
         {
             arabic: 'ٱلرَّحِيمِ',
@@ -26,80 +25,92 @@
             arabic: 'بِسْمِ',
             translation: 'In the name of',
         },
-    ]
-   const textToGo = wordTranslationPair.map(({arabic, translation}) => {
-        return (`<div> <p>${arabic}</p> <p>${translation}</p> </div>`)
-    })
-    // console.log(textToGo)
+    ];
+
+    // Use map to generate the HTML and join the elements into a single string
+    const textToGo = wordTranslationPair
+        .map(({ arabic, translation }) => {
+            return `
+          <div class="word-pair">
+            <p class="arabic-word">${arabic}</p>
+            <p class="translation">${translation}</p>
+          </div>`;
+        })
+        .join(''); // Join all elements into one string without separators
+
+
     // Get the container where the word pairs will be displayed
-    const container = document.getElementById('word-pairs-container');
-    container.innerHTML = textToGo
-  
-    // Create HTML for each word pair and add them to the container
-    // wordPairs.forEach(pair => {
-    //   const wordPairDiv = document.createElement('div');
-    //   wordPairDiv.classList.add('word-pair');
-  
-    //   // Create the Arabic text and translation divs
-    //   const arabicDiv = document.createElement('div');
-    //   arabicDiv.classList.add('arabic-text');
-    //   arabicDiv.innerHTML = pair.arabic;  // Set the Arabic word
-  
-    //   const translationDiv = document.createElement('div');
-    //   translationDiv.classList.add('translation');
-    //   translationDiv.innerHTML = pair.translation;  // Set the translation
-  
-    //   // Append the Arabic and translation divs to the word pair container
-    //   wordPairDiv.appendChild(arabicDiv);
-    //   wordPairDiv.appendChild(translationDiv);
-  
-    //   // Append the word pair div to the main container
-    //   container.appendChild(wordPairDiv);
-    // });
-  </script>
-  
-  <!-- Styling for the word pairs -->
-  <style>
-    #word-pairs-container{
-        display: flex;
-        gap: 1rem;
+    const div = document.getElementById('word-pairs-container');
+    const p = document.getElementById('full-translation');
+    div.innerHTML = textToGo;
+    p.innerText = "In the name of Allah, the Most Beneficient, the Most Merciful"
+</script>
+
+<!-- Styling for the word pairs -->
+<style>
+    body {
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
     }
+
     .back {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 600px;
+        margin: auto;
+        margin-top: 2rem;
+
     }
-  
-    .full-translation {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #555;
-      line-height: 1.5;
-      text-align: center;
+
+    #word-pairs-container {
+        display: flex;
+        /* flex-wrap: wrap; */
+        gap: 1rem;
+        justify-content: center;
+        padding: 10px;
     }
-  
+
     .word-pair {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-      margin-bottom: 10px;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        padding: 10px;
+        /* margin: 5rem; */
+        background: #f1f1f1;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* width: 150px; */
     }
-  
-    .arabic-text {
-      font-family: "Traditional Arabic", serif;
-      font-size: 24px;
-      text-align: center;
-      margin-right: 15px;
+
+    .arabic-word {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2b7a78;
+        /* A soothing teal color */
+        margin: 0;
     }
-  
+
     .translation {
-      font-size: 18px;
-      text-align: center;
-      color: #333;
+        font-size: 1rem;
+        font-style: italic;
+        color: #555;
+        margin: 5px 0 0 0;
     }
-  </style>
+
+    #full-translation {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #444;
+    }
+</style>

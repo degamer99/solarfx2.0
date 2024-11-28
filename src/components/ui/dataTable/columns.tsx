@@ -25,11 +25,12 @@ import {
 import { Label } from "@/components/ui/label"
 import { Input } from "../input"
 import { useUserData } from "@/components/store"
-import { deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore"
+import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore"
 import { firestore, storage } from "@/components/firebase"
 import Link from "next/link"
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import Image from 'next/image';
+import KycDialog from '../kycDialog';
 
 export type expertData = {
   name: string
@@ -663,11 +664,34 @@ export const columns: ColumnDef<Payment>[] = [
         // console.log('Name:', formValues['name']);
         // console.log('Email:', formValues['email']);
       }
+
+      const [isKycOpen, setIsKycOpen] = useState(false);
+      const [kycData, setKycData] = useState<any>(null);
+      const viewKycInfo = async () => {
+    const userRef = doc(firestore, "users", id)
+    let fetchedData
+    try {
+      await getDoc(userRef)
+        .then((file) => {
+          fetchedData = { ...file.data() };
+          if (!fetchedData.kyc) {
+            alert("No Kyc Information")
+            return
+          }
+          setKycData(fetchedData.kyc)
+          setIsKycOpen(true);
+          console.log("data", file.data())
+        })
+    } catch (error) {
+      console.error(error)
+    }
+
+      }
       return (<>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">Open menu </span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -677,6 +701,7 @@ export const columns: ColumnDef<Payment>[] = [
             <DropdownMenuItem onClick={openEmailDialog}>Send Email</DropdownMenuItem>
             <DropdownMenuItem onClick={openNotification}>Send Notification</DropdownMenuItem>
             <DropdownMenuItem onClick={openWithdraw}>set Withdraw Limit</DropdownMenuItem>
+            <DropdownMenuItem onClick={viewKycInfo}>View Client Info</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         {/* Edit Profile Dialog */}
@@ -767,6 +792,8 @@ export const columns: ColumnDef<Payment>[] = [
 
           </DialogContent>
         </Dialog>
+
+        {isKycOpen && ( <KycDialog kyc={kycData} open={isKycOpen} onClose={setIsKycOpen} />)}
       </>
       );
     },

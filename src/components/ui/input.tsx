@@ -71,6 +71,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
             ref={ref}
             {...props}
+            required={required}
           />
         </div>
       </div>
