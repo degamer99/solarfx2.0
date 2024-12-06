@@ -1,13 +1,14 @@
 // components/IDVerificationForm.tsx
 "use client"
 import { auth, firestore, storage } from '@/components/firebase';
+import CopyInput from '@/components/ui/copyinput';
 import FormWrapper from '@/components/ui/form-wrapper';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const IDVerificationForm: React.FC = () => {
  let frontImage: any
@@ -17,7 +18,11 @@ const IDVerificationForm: React.FC = () => {
       backImage
   }
   const [isSending, setIsSending] = useState("Submit")
+  // const [isSending, setIsSending] = useState("Submit")
 
+  useEffect( () => {
+
+  }, [isSending, ])
 
   const handleImageChange = (e: any) => {
     const file = e.target.files[0];

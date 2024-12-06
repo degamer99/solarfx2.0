@@ -32,6 +32,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { FieldError } from "react-hook-form";
 
 // Extend the InputProps to include label, icon, labelColor, and iconColor
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -40,13 +41,14 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   labelColor?: string; // Allow custom label color
   iconColor?: string;  // Allow custom icon color
   divName?: string;
+  error?: FieldError | undefined;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className,divName, type, label, icon, required, labelColor = "text-black", iconColor = "text-gray-500", ...props }, ref) => {
+  ({ className, divName, type, label, icon, required, labelColor = "text-black", iconColor = "text-gray-500", error, ...props }, ref) => {
     return (
-      <div 
-      className={cn("flex flex-col", divName)}
+      <div
+        className={cn("flex flex-col", divName)}
       >
         {/* Label */}
         {label && (
@@ -62,7 +64,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <span className={cn("p-2", iconColor)}>
               {icon}
             </span>
-          ) }
+          )}
           <input
             type={type}
             className={cn(
@@ -74,6 +76,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             required={required}
           />
         </div>
+        {error && <p className="text-red-500 text-sm py-1 px-2">{error.message}</p>}
       </div>
     );
   }

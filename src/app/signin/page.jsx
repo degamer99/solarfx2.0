@@ -170,10 +170,10 @@ export default function Signin() {
     }
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white rounded-xl py-10 px-8 flex flex-col ">
+            <div className=" py-10 px-8 flex flex-col ">
                 <div className="flex flex-col justify-center items-center">
                 <Image
-                style={{ width: "8rem" }}
+                style={{ width: "10rem" }}
                 // className=" scale-50"
                 // style={{ width: "80%" }}
                 src={SolarLogo}
@@ -183,6 +183,7 @@ export default function Signin() {
                 // height={50}
               />
                     <h2 className="font-bold text-2xl">Login </h2>
+                    <br />
                 </div>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <Input name="email" onChange={handleInputChange} type="email" placeholder="Email" icon={<Mail />} label="Email" required />

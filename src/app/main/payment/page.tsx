@@ -122,7 +122,7 @@ const Payment = () => {
               <span className="text-xl">$</span>
             </div>
             <p className="ml-4">
-              Make Payment of ${amount} <span className="font-semibold"></span> to the address below and click &quot; SEND PROOF OF DEPOSIT&quot;
+              Make Payment of ${amount} <span className="font-semibold"></span> to the address below and click  <strong> SEND PROOF OF DEPOSIT</strong> 
             </p>
           </div>
 
@@ -156,7 +156,7 @@ const Payment = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block mb-2 text-gray-600">Upload Proof of Deposit:</label>
+            <label className="block mb-2 text-gray-600">Upload Proof of Deposit: </label>
             <input type="file" onChange={handleImageChange} className="block w-full border border-gray-300 rounded-md p-1.5" />
           </div>
 
