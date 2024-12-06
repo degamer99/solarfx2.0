@@ -168,7 +168,7 @@ export default function SignUp() {
 
   const plansArray = [
     {
-      price: "$49.99",
+      price: "$149.99",
       title: "Cadet",
       description: "A first step towards breaking free",
       features: [
@@ -178,7 +178,7 @@ export default function SignUp() {
       ],
     },
     {
-      price: "$99.99",
+      price: "$449.99",
       title: "Lieutenant",
       description: "For advanced learners",
       features: [
@@ -188,7 +188,7 @@ export default function SignUp() {
       ],
     },
     {
-      price: "$199.99",
+      price: "$999.99",
       title: "Commander",
       description: "Unlock full potential",
       features: [
