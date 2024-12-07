@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { firestore } from "./firebase";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import Withdrawal from "@/app/main/withdrawal/page";
-import { expertData, Payment, PaymentInfo } from "./ui/dataTable/columns";
+import { expertData, Payment, PaymentInfo, preusersData } from "./ui/dataTable/columns";
 
 
 type UserData = {
@@ -37,11 +37,12 @@ type UserDataType = {
   // siteData: siteData;
   paymentData: PaymentInfo[]
   expertData: expertData[]
+  preusersData: preusersData[]
   get: (uid: string) => Promise<void>;
   getPaymentData: () => Promise<void>;
   getExpertData: () => Promise<void>;
   update: (data: UserData) => Promise<void>;
-  // update: (data: UserData) => void;
+  getPreusersData: () => Promise<void>
   set: (ref: any, data: UserData) => Promise<void>
   editedData: Record<string, Partial<Payment>>;
   updateEditedData: (id: string, key: keyof Payment, value: string | number) => void;
@@ -85,6 +86,43 @@ export const useUserData = create<UserDataType>((set, get) => ({
       paymentQrcode: "",
     }
   ],
+  preusersData: [{
+    id: " ",
+    name: " ",
+    email: " ",
+    password: " ",
+    method: " ",
+    imageUrl: " ",
+    plan: " ",
+    amount: " ",
+  }],
+  getPreusersData: async () => {
+    try {
+      const querySnapshot = await getDocs(collection(firestore, 'preusers'));
+      const preusersArray: preusersData[] = [];
+      querySnapshot.forEach((doc) => {
+        const docData = doc.data();
+
+        // Ensure all required fields are present, or provide default values
+        const paymentData: preusersData = {
+          id: doc.id,
+          name: docData.name,
+          email: docData.email,
+          password: docData.password,
+          method: docData.method,
+          imageUrl: docData.imageUrl,
+          plan: docData.plan,
+          amount: docData.amount,
+        };
+        preusersArray.push(paymentData);
+      });
+      console.log("preusersArray", preusersArray)
+      set({ preusersData: preusersArray })
+      //   setPaymentData(paymentDataArray);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  },
   getPaymentData: async () => {
     try {
       const querySnapshot = await getDocs(collection(firestore, 'paymentInfo'));

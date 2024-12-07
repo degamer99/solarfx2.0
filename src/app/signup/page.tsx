@@ -41,6 +41,14 @@ export default function SignUp() {
 
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data, plan);
+    console.log({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      method: data.method,
+      plan: plan.title,
+      amount: plan.amount,
+    })
     setSending(true)
     const id = Math.random().toString()
     const userRef = doc(firestore, "preusers", id);
@@ -54,6 +62,8 @@ export default function SignUp() {
         email: data.email,
         password: data.password,
         method: data.method,
+        plan: plan.title,
+        amount: plan.amount,
         imageUrl: link,
       }, { merge: true }).then(() => {
         setSending(false)

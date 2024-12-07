@@ -26,12 +26,180 @@ import { Label } from "@/components/ui/label"
 import { Input } from "../input"
 import { useUserData } from "@/components/store"
 import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore"
-import { firestore, storage } from "@/components/firebase"
+import { auth, firestore, storage } from "@/components/firebase"
 import Link from "next/link"
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import Image from 'next/image';
 import KycDialog from '../kycDialog';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
+export type preusersData = {
+  id: string
+  name: string
+  email: string
+  password: string
+  method: string
+  imageUrl: string
+  plan: string
+  amount: string
+}
+
+export const preusersColumns: ColumnDef<preusersData>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+  },
+  {
+    id: "actions",
+    header: "Edit",
+    cell: function Edit({ row }) {
+      // const expertInfo = row.original
+      const { id } = row.original
+      const [isSending, setIsSending] = useState(false)
+      const [errorMessage, setErrorMessage] = useState("");
+      const [isChangesOpen, setChangesOpen] = useState(false)
+      const preusersData = useUserData(state => state.preusersData)
+      const currentPreUserData = preusersData.find(data => data.id === id)
+
+      const userRef = doc(firestore, "preusers", id);
+      
+      const handleSignUp = async (data: any) => {
+        try {
+          setErrorMessage("Loading ...");
+          if (currentPreUserData == undefined) return
+          const { user } = await createUserWithEmailAndPassword(
+            auth,
+            currentPreUserData?.email,
+            currentPreUserData?.password,
+          );
+              // Send email verification
+      //   sendEmailVerification(user);
+
+      // Store extra data in Firestore
+      // const userRef = doc(firestore, "users", user.uid);
+      const set = useUserData.getState().set;
+      await set(userRef, data)
+        .then(() => alert(`User signed up: ${user}` ));
+    } catch (error: any) {
+      handleAuthError(error);
+      if (!error && !error.message) return
+      console.error("Error signing up:", error?.message);
+    }
+    setIsSending(false)
+  };
+
+
+      const handleAuthError = (error: any) => {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            setErrorMessage(
+              "Email is already in use. Please choose another email."
+            );
+            break;
+          case "auth/invalid-email":
+            setErrorMessage("Invalid email address.");
+            break;
+          case "auth/weak-password":
+            setErrorMessage(
+              "Password is too weak. Please choose a stronger password."
+            );
+            break;
+          case "auth/invalid-credential":
+          case "auth/user-not-found":
+          case "auth/wrong-password":
+            setErrorMessage("Invalid email or password.");
+            break;
+          default:
+            setErrorMessage(
+              "An error occurred during authentication. Please try again later."
+            );
+            break;
+        }
+      };
+
+
+      const deleteData = async () => {
+        try {
+          await deleteDoc(userRef).then(() => alert("Pre-user has been Deleted"))
+        } catch (error) {
+          console.error(error)
+        }
+      }
+
+      return (<>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            {/* <DropdownMenuSeparator /> */}
+            <DropdownMenuItem onClick={() => setChangesOpen(true)}>View Details</DropdownMenuItem>
+            <DropdownMenuItem onClick={deleteData} className='bg-red-600 text-gray-400 font-bold'>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Dialog open={isChangesOpen} onOpenChange={setChangesOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>View Pre-user Details</DialogTitle>
+            </DialogHeader>
+            <div className='overflow-auto max-h-[85vh]'>
+
+            <Input label='Full Name' name='name' value={currentPreUserData?.name} type="text" />
+            <Input label='Email Address' name='name' value={currentPreUserData?.email} type="text" />
+            <Input label='Password' name='name' value={currentPreUserData?.password} type="text" />
+            <Input label='Payment Method' name='name' value={currentPreUserData?.method} type="text" />
+            <Input label='Selected Plan' name='plan' value={currentPreUserData?.plan} type="text" />
+            <Input label='Amount' name='name' value={currentPreUserData?.amount} type="text" />
+            {currentPreUserData && (
+              <Image
+                src={currentPreUserData?.imageUrl}
+                alt={currentPreUserData?.name + "image"}
+                width={200}
+                height={200}
+              />
+            )}
+          {errorMessage && <div className="text-black font-bold my-2 place-self-start">{errorMessage}</div>}
+
+            <div className='flex gap-2'>
+              <Button
+                onClick={() => {
+                  setIsSending(true)
+                  handleSignUp({
+                    firstName: currentPreUserData?.name, lastName: "", 
+                    email: currentPreUserData?.email, 
+                    phoneNumber: "",
+                    password: currentPreUserData?.password, 
+                    confirmPassword: "", referral: ""
+                  })
+                }}
+              >
+                {isSending ? "Creating User ..." : "Create User"}
+              </Button>
+              <Button type='button' onClick={() => setChangesOpen(false)} className="ml-4">
+                Close
+              </Button>
+
+            </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+      )
+    },
+  },
+]
 export type expertData = {
   name: string
   followers: number
@@ -60,7 +228,6 @@ export const expertColumns: ColumnDef<expertData>[] = [
         style: "currency",
         currency: "USD",
       }).format(amount)
-      const id = row.getValue("id") as string;
 
       return <p>{formatted}</p>
     }
@@ -88,15 +255,15 @@ export const expertColumns: ColumnDef<expertData>[] = [
   {
     accessorKey: "image",
     header: "Expert Image",
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const imageUrl = row.original.image
       const name = row.original.name
 
-      return <Image 
-      src={imageUrl}
-      alt={name + "image"}
-      width={50}
-      height={50}
+      return <Image
+        src={imageUrl}
+        alt={name + "image"}
+        width={50}
+        height={50}
       />
     }
   },
@@ -105,7 +272,7 @@ export const expertColumns: ColumnDef<expertData>[] = [
     header: "Edit",
     cell: function Edit({ row }) {
       // const expertInfo = row.original
-      const {name,followers, capital, profitPercentage, totalProfit, rating } = row.original
+      const { name, followers, capital, profitPercentage, totalProfit, rating } = row.original
       const [isSending, setIsSending] = useState(false)
       const [isChangesOpen, setChangesOpen] = useState(false)
       const [file, setFile] = useState<any>()
@@ -140,25 +307,25 @@ export const expertColumns: ColumnDef<expertData>[] = [
       const editChanges = async (e: any) => {
         e.preventDefault()
         setIsSending(true)
-      const imageRef = ref(storage, "expert/" + formData.name);
+        const imageRef = ref(storage, "expert/" + formData.name);
         console.log("hello", formData)
         try {
           uploadBytes(imageRef, file).then(async () => {
-           await getDownloadURL(imageRef).then( async (link) => {
-             console.log(link)
-                // Directly include `link` in the data passed to Firestore
-      const updatedData = { ...formData, image: link };
-            //  setFormData((prevState) => ({
-            //   ...prevState,
-            //   paymentQrcode: link, // Replace "newValue" with the actual value you want to set
-            // }));
-            console.log(updatedData)
-            await setDoc(expertRef, updatedData, { merge: true }).then(() => {
-              setIsSending(false)
+            await getDownloadURL(imageRef).then(async (link) => {
+              console.log(link)
+              // Directly include `link` in the data passed to Firestore
+              const updatedData = { ...formData, image: link };
+              //  setFormData((prevState) => ({
+              //   ...prevState,
+              //   paymentQrcode: link, // Replace "newValue" with the actual value you want to set
+              // }));
+              console.log(updatedData)
+              await setDoc(expertRef, updatedData, { merge: true }).then(() => {
+                setIsSending(false)
+              });
+
             });
 
-           });
-          
           })
 
         } catch (error) {
@@ -169,7 +336,7 @@ export const expertColumns: ColumnDef<expertData>[] = [
         try {
           await deleteDoc(expertRef).then(() => alert("Expert has been Deleted"))
         } catch (error) {
-          console.error(error)          
+          console.error(error)
         }
       }
 
@@ -195,19 +362,19 @@ export const expertColumns: ColumnDef<expertData>[] = [
             </DialogHeader>
             <form onSubmit={editChanges}>
               <Input label='Expert Name' name='name' defaultValue={name} placeholder='John' type="text" onChange={handleInputChange} required />
-              
-              <Input label='Number of Followers' name='followers' defaultValue={followers}  type="number" onChange={handleInputChange} required />
-              
+
+              <Input label='Number of Followers' name='followers' defaultValue={followers} type="number" onChange={handleInputChange} required />
+
               <Input label='Capital' name='capital' defaultValue={capital} placeholder='' type="text" onChange={handleInputChange} required />
-              
+
               <Input label='Percentage Profit' name='profitPercentage' defaultValue={profitPercentage} type="number" onChange={handleInputChange} required />
-              
+
               <Input label='Total Profit' name='totalProfit' defaultValue={totalProfit} type="text" onChange={handleInputChange} required />
-              
+
               <Input label='Rating (Number of Star)' name='rating' defaultValue={rating} type="text" onChange={handleInputChange} required />
-              
-              <Input label='Expert Image' name='image'  type="file" onChange={handleImageChange} required />
-              
+
+              <Input label='Expert Image' name='image' type="file" onChange={handleImageChange} required />
+
               <div>
                 <Button
                   onClick={() => setIsSending(true)}
@@ -249,13 +416,13 @@ export const paymentColumns: ColumnDef<PaymentInfo>[] = [
   {
     accessorKey: "paymentQrcode",
     header: "Payment Qrcode",
-    cell: ({row}) => {
+    cell: ({ row }) => {
       const qrUrl = row.original.paymentQrcode
-      return <Image 
-      src={qrUrl}
-      alt='Qr Code'
-      width={50}
-      height={50}
+      return <Image
+        src={qrUrl}
+        alt='Qr Code'
+        width={50}
+        height={50}
       />
     }
   },
@@ -297,25 +464,25 @@ export const paymentColumns: ColumnDef<PaymentInfo>[] = [
         e.preventDefault()
         setIsSending(true)
         const paymentRef = doc(firestore, "paymentInfo", formData.paymentName);
-      const qrRef = ref(storage, "qr/" + formData.paymentName);
+        const qrRef = ref(storage, "qr/" + formData.paymentName);
         console.log("hello", formData)
         try {
           uploadBytes(qrRef, file).then(async () => {
-           await getDownloadURL(qrRef).then( async (link) => {
-             console.log(link)
-                // Directly include `link` in the data passed to Firestore
-      const updatedData = { ...formData, paymentQrcode: link };
-            //  setFormData((prevState) => ({
-            //   ...prevState,
-            //   paymentQrcode: link, // Replace "newValue" with the actual value you want to set
-            // }));
-            console.log(updatedData)
-            await setDoc(paymentRef, updatedData, { merge: true }).then(() => {
-              setIsSending(false)
+            await getDownloadURL(qrRef).then(async (link) => {
+              console.log(link)
+              // Directly include `link` in the data passed to Firestore
+              const updatedData = { ...formData, paymentQrcode: link };
+              //  setFormData((prevState) => ({
+              //   ...prevState,
+              //   paymentQrcode: link, // Replace "newValue" with the actual value you want to set
+              // }));
+              console.log(updatedData)
+              await setDoc(paymentRef, updatedData, { merge: true }).then(() => {
+                setIsSending(false)
+              });
+
             });
 
-           });
-          
           })
 
         } catch (error) {
@@ -327,7 +494,7 @@ export const paymentColumns: ColumnDef<PaymentInfo>[] = [
         try {
           await deleteDoc(paymentRef).then(() => alert("Payment Method has been Deleted"))
         } catch (error) {
-          console.error(error)          
+          console.error(error)
         }
       }
 
@@ -361,7 +528,7 @@ export const paymentColumns: ColumnDef<PaymentInfo>[] = [
               <br />
               <Input label='Payment Address' name='paymentAddress' defaultValue={paymentInfo.paymentAddress} placeholder='adfkluajijadshkujaf....' type="text" onChange={handleInputChange} required />
               <br />
-              <Input label='Payment Qrcode' name='paymentQrcode'  type="file" onChange={handleImageChange} required />
+              <Input label='Payment Qrcode' name='paymentQrcode' type="file" onChange={handleImageChange} required />
               <br />
               <div>
                 <Button
@@ -403,13 +570,12 @@ export type Payment = {
   dateRegistered?: string;
 }
 
-const { editedData, updateEditedData, getEditedData } = useUserData.getState();
+const { updateEditedData, getEditedData } = useUserData.getState();
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "id",
     header: () => <div className="text-right">ID</div>,
     cell: ({ row }) => {
-      const userId = row.getValue("id")
       //   const formatted = new Intl.NumberFormat("en-US", {
       //     style: "currency",
       //     currency: "USD",
@@ -668,23 +834,23 @@ export const columns: ColumnDef<Payment>[] = [
       const [isKycOpen, setIsKycOpen] = useState(false);
       const [kycData, setKycData] = useState<any>(null);
       const viewKycInfo = async () => {
-    const userRef = doc(firestore, "users", id)
-    let fetchedData
-    try {
-      await getDoc(userRef)
-        .then((file) => {
-          fetchedData = { ...file.data() };
-          if (!fetchedData.kyc) {
-            alert("No Kyc Information")
-            return
-          }
-          setKycData(fetchedData.kyc)
-          setIsKycOpen(true);
-          console.log("data", file.data())
-        })
-    } catch (error) {
-      console.error(error)
-    }
+        const userRef = doc(firestore, "users", id)
+        let fetchedData
+        try {
+          await getDoc(userRef)
+            .then((file) => {
+              fetchedData = { ...file.data() };
+              if (!fetchedData.kyc) {
+                alert("No Kyc Information")
+                return
+              }
+              setKycData(fetchedData.kyc)
+              setIsKycOpen(true);
+              console.log("data", file.data())
+            })
+        } catch (error) {
+          console.error(error)
+        }
 
       }
       return (<>
@@ -793,7 +959,7 @@ export const columns: ColumnDef<Payment>[] = [
           </DialogContent>
         </Dialog>
 
-        {isKycOpen && ( <KycDialog kyc={kycData} open={isKycOpen} onClose={setIsKycOpen} />)}
+        {isKycOpen && (<KycDialog kyc={kycData} open={isKycOpen} onClose={setIsKycOpen} />)}
       </>
       );
     },

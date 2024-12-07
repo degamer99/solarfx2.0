@@ -13,13 +13,15 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { firestore } from "@/components/firebase";
 import { DataTable } from "@/components/ui/dataTable/page";
-import { Payment, PaymentInfo, columns, expertColumns, expertData, paymentColumns } from "@/components/ui/dataTable/columns";
+import { Payment, PaymentInfo, columns, expertColumns, expertData, paymentColumns, preusersColumns } from "@/components/ui/dataTable/columns";
 
 
 export default function Admin() {
   const [allUserData, setAllUserData] = useState<Payment[]>([]);
   const [paymentData, setPaymentData] = useState<PaymentInfo[]>([]);
   const [expertData, setExpertData] = useState<expertData[]>([]);
+  const getPreusersData = useUserData( state => state.getPreusersData)
+  const preusersData = useUserData( state => state.preusersData)
   useEffect(() => {
     const getAllUserData = async () => {
       try {
@@ -100,6 +102,7 @@ export default function Admin() {
     getAllUserData()
     getPaymentData()
     getExpertData()
+    getPreusersData()
   }, [])
   // const data = getData()
   const data: Payment[] = [
@@ -137,6 +140,7 @@ export default function Admin() {
       {/* <h2 className="font-bold text-xl mt-2">Hello, User</h2> */}
       <section className="mb-48">
         <h2 className="font-bold text-xl my-4" > Customer Information </h2>
+        <DataTable columns={preusersColumns} data={preusersData} />
         <DataTable columns={columns} data={allUserData} />
         <DataTable columns={paymentColumns} data={paymentData} />
         <DataTable columns={expertColumns} data={expertData} />
