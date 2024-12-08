@@ -69,7 +69,7 @@ export const preusersColumns: ColumnDef<preusersData>[] = [
       const preusersData = useUserData(state => state.preusersData)
       const currentPreUserData = preusersData.find(data => data.id === id)
 
-      const userRef = doc(firestore, "preusers", id);
+      const preuserRef = doc(firestore, "preusers", id);
       
       const handleSignUp = async (data: any) => {
         try {
@@ -80,14 +80,18 @@ export const preusersColumns: ColumnDef<preusersData>[] = [
             currentPreUserData?.email,
             currentPreUserData?.password,
           );
+          user.uid
               // Send email verification
       //   sendEmailVerification(user);
 
       // Store extra data in Firestore
-      // const userRef = doc(firestore, "users", user.uid);
+      const userRef = doc(firestore, "users", user.uid);
       const set = useUserData.getState().set;
       await set(userRef, data)
-        .then(() => alert(`User signed up: ${user}` ));
+        .then(() => {
+          setErrorMessage("")
+          alert(`User signed up: ${user}` )
+        });
     } catch (error: any) {
       handleAuthError(error);
       if (!error && !error.message) return
@@ -128,7 +132,7 @@ export const preusersColumns: ColumnDef<preusersData>[] = [
 
       const deleteData = async () => {
         try {
-          await deleteDoc(userRef).then(() => alert("Pre-user has been Deleted"))
+          await deleteDoc(preuserRef).then(() => alert("Pre-user has been Deleted"))
         } catch (error) {
           console.error(error)
         }
