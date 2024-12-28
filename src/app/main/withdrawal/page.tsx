@@ -27,7 +27,7 @@ export default function Withdraw() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if (name == method) {
+        if (name == "method") {
         setFormData({
             ...formData,
             [name]: value,
