@@ -41,7 +41,8 @@ export default function Withdraw() {
     };
 
     const onSubmit = () => {
-        const queryString = new URLSearchParams(formData).toString();
+        const withdrawData = {method: formData.method, amount: 0.15 * +formData.amount}
+        const queryString = new URLSearchParams(withdrawData).toString();
         console.log(formData);
         router.push(`/main/payment?${queryString}`);
     };
