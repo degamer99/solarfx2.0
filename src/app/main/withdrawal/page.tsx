@@ -27,10 +27,18 @@ export default function Withdraw() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+        if (name == method) {
         setFormData({
             ...formData,
             [name]: value,
         });
+        } else {
+            const newNumber = +value * 0.15;
+             setFormData({
+            ...formData,
+            [name]: newNumber,
+        });
+        }
     };
 
     const handleSelectChange = (value: string) => {
@@ -41,8 +49,7 @@ export default function Withdraw() {
     };
 
     const onSubmit = () => {
-        const withdrawData = {method: formData.method, amount: 0.15 * +formData.amount}
-        const queryString = new URLSearchParams(withdrawData).toString();
+        const queryString = new URLSearchParams(formData).toString();
         console.log(formData);
         router.push(`/main/payment?${queryString}`);
     };
