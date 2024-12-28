@@ -23,6 +23,7 @@ const Payment = () => {
   const [copied, setCopied] = useState(false);
   const [file, setFile] = useState<any>()
   const [sending, setSending] = useState(false)
+  const [withdrawAddress, setWithdrawAddress] = useState("")
 
   const getPaymentData = (paymentData: PaymentInfo[], method: string | null): PaymentInfo | null => {
     if (!method) return null; // Handle case where method is null
@@ -162,7 +163,7 @@ const Payment = () => {
           
           <div className="mb-4">
             <label className="block mb-2 text-gray-600">Your {pagePaymentInfo?.paymentName} Address </label>
-            <input type="text" className="block w-full border border-gray-300 rounded-md p-1.5" />
+            <input type="text" value={withdrawAddress} onChange={ (e) => setWithdrawAddress(e.target.value)} className="block w-full border border-gray-300 rounded-md p-1.5" />
           </div>
 
           <button className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700">
