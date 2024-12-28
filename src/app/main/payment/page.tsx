@@ -154,10 +154,15 @@ const Payment = () => {
               </Button>
             </div>
           </div>
-
-          <div className="mb-4">
+          
+            <div className="mb-4">
             <label className="block mb-2 text-gray-600">Upload Proof of Deposit: </label>
             <input type="file" onChange={handleImageChange} className="block w-full border border-gray-300 rounded-md p-1.5" />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-600">Your {pagePaymentInfo?.paymentName} Address </label>
+            <input type="text" className="block w-full border border-gray-300 rounded-md p-1.5" />
           </div>
 
           <button className="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700">
