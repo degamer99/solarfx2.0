@@ -18,13 +18,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" className={`${roboto.variable} ${merriweather.variable}`}>
       <body className={inter.className}>
         {children}
         {/* Tidio script tag */}
         <script src="//code.tidio.co/kryrf6lki4rnjdqqopvqtinvjdqko7ms.js" async></script>
-        </body>
+      </body>
     </html>
   );
 }
