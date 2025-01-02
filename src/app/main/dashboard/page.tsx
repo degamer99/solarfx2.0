@@ -14,7 +14,7 @@ export default function Dashboard() {
     const userData = useUserData((state) => state.userData)
     return (
         <>
-            { userData.notificationMessage && (<div className="my-2 flex items-center border border-gray-300 rounded-lg p-4 shadow-lg bg-gray-100 space-x-3">
+            { userData?.notificationMessage && (<div className="my-2 flex items-center border border-gray-300 rounded-lg p-4 shadow-lg bg-gray-100 space-x-3">
                 <AlertCircle className="text-red-500 w-5 h-5" /> {/* Icon */}
                 <p className="text-gray-800 font-medium ml-2">
                     {userData.notificationMessage}

@@ -11,19 +11,22 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUserData } from "@/components/store";
+import Payment from "@/components/payment";
 
 export default function Withdraw() {
+    const [isWithdrawOpen, setWithdrawOpen] = useState(false)
     const getPaymentData = useUserData( state => state.getPaymentData)
     const paymentData = useUserData( state => state.paymentData)
-    useEffect(() => {
-        getPaymentData()
-    }, [])
     const router = useRouter()
     const userData = useUserData((state) => state.userData)
     const [formData, setFormData] = useState({
         method: "",
         amount: "",
     });
+    
+    useEffect(() => {
+        getPaymentData()
+    }, [])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -56,6 +59,12 @@ export default function Withdraw() {
     console.log("numberOfTrade", userData.numberOfTrade )
     console.log("minimumTrade", userData.minimumTrade )
 
+    const handleWithdrawForm = () => {
+        console.log("doing")
+        setWithdrawOpen(true)
+
+    }
+
     return (
         <div>
             <h2 className="text-5xl font-bold py-6">Withdraw</h2>
@@ -76,7 +85,7 @@ export default function Withdraw() {
                 
                 {/* Safely check if userData values are defined */}
                 { (userData.numberOfTrade ?? 0) >= (userData.minimumTrade ?? 2)  ? (
-                    <Button size="lg" className="bg-green-500" onClick={onSubmit}>Continue</Button>
+                    <Button size="lg" className="bg-green-500" onClick={handleWithdrawForm}>Continue</Button>
                 )
                  :
                  (
@@ -93,6 +102,7 @@ export default function Withdraw() {
                 <h2 className="text-3xl font-bold py-3">Withdraw History</h2>
                 <DataTableDemo />
             </div>
+            <Payment open={isWithdrawOpen} set={setWithdrawOpen} formData={formData} deposit={false} /> 
         </div>
     );
 }
