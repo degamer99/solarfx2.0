@@ -18,7 +18,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" className={`${roboto.variable} ${merriweather.variable}`}>
       <body className={inter.className}>
