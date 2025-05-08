@@ -9,7 +9,8 @@ type UserData = {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  deposit: string
+  deposit: string;
+  accountBalance: number;
   password: string;
   confirmPassword?: string;
   pending?: boolean;
@@ -55,6 +56,7 @@ export const useUserData = create<UserDataType>((set, get) => ({
     lastName: "Name",
     phoneNumber: "",
     deposit: "",
+    accountBalance: 0,
     password: "",
     pending: false,
     pendingAddress: "",
