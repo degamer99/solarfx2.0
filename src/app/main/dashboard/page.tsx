@@ -26,8 +26,8 @@ export default function Dashboard() {
                 <div className="col-span-1">
                     {/* <!-- Card for Deposits --> */}
                     <div className="bg-blue-400 p-4 rounded shadow">
-                        <h3 className="text-lg font-bold">Deposits</h3>
-                        <p>${userData.deposit}</p>
+                        <h3 className="text-lg font-bold">Account Balance</h3>
+                        <p>${userData.accountBalance}</p>
                     </div>
                 </div>
                 <div className="col-span-1">
